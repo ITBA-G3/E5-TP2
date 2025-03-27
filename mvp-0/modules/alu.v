@@ -1,14 +1,10 @@
-module ALU(
-    input wire [31:0] A,
-    input wire [31:0] B,
+module alu(
+    input wire [31:0] A, B,
     input wire [2:0] func3,
+    input wire [6:0] func7,
     input wire [6:0] opcode,
     input wire [4:0] shamt,
-    input wire sub,
-    input wire sra,
-    output reg EQ,
-    output reg EQM,
-    output reg EQM_U,
+    output reg EQ, EQM, EQM_U,
     output reg [31:0] Q
 );
 
@@ -43,8 +39,10 @@ begin
             endcase
 
         /* Load and Store Instructions */
-        7'b0000011: //LOAD
-        7'b0100011: //STORE
+        7'b0000011:     //LOAD
+            Q = A + B;
+
+        7'b0100011:     //STORE
             Q = A + B;
 
         /* Immediate Instructions */
@@ -65,14 +63,14 @@ begin
                 3'b001: //SHIFT LEFT LOGICAL IMMEDIATE (SLLI)
                     Q = A << shamt;
                 default:
-                    Q = sra ? (A >>> shamt) : (A >> shamt); //SRA or SRL
+                    Q = (func7[5]) ? (A >>> shamt) : (A >> shamt); //SRA or SRL
             endcase
 
         /* Operations */
         7'b0110011:
             case(func3)
                 3'b000:
-                    Q = sub ? (A - B) : (A + B); //SUB or ADD
+                    Q = (func7[5]) ? (A - B) : (A + B); //SUB or ADD
                 3'b010: //SLT, Q = 1 if A<B
                     Q = A < B;
                 3'b011: //SLT Unsigned, Q = 1 if A<B
@@ -82,7 +80,7 @@ begin
                 3'b001: //SHIFT LEFT LOGICAL
                     Q = A << shamt;
                 3'b101:
-                    Q = sra ? (A >>> shamt) : (A >> shamt); //SRA or SRL
+                    Q = (func7[5]) ? (A >>> shamt) : (A >> shamt); //SRA or SRL
                 3'b110: //OR
                     Q = A | B;
                 default: //AND
