@@ -1,0 +1,177 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 2023  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 16 16 208 384)
+	(text "decoder" (rect 5 0 36 12)(font "Arial" ))
+	(text "inst" (rect 8 352 20 364)(font "Arial" ))
+	(port
+		(pt 0 32)
+		(input)
+		(text "instr[31..0]" (rect 0 0 40 12)(font "Arial" ))
+		(text "instr[31..0]" (rect 21 27 61 39)(font "Arial" ))
+		(line (pt 0 32)(pt 16 32)(line_width 3))
+	)
+	(port
+		(pt 192 32)
+		(output)
+		(text "isALUreg" (rect 0 0 40 12)(font "Arial" ))
+		(text "isALUreg" (rect 131 27 171 39)(font "Arial" ))
+		(line (pt 192 32)(pt 176 32)(line_width 1))
+	)
+	(port
+		(pt 192 48)
+		(output)
+		(text "isALUimm" (rect 0 0 44 12)(font "Arial" ))
+		(text "isALUimm" (rect 127 43 171 55)(font "Arial" ))
+		(line (pt 192 48)(pt 176 48)(line_width 1))
+	)
+	(port
+		(pt 192 64)
+		(output)
+		(text "isBranch" (rect 0 0 34 12)(font "Arial" ))
+		(text "isBranch" (rect 137 59 171 71)(font "Arial" ))
+		(line (pt 192 64)(pt 176 64)(line_width 1))
+	)
+	(port
+		(pt 192 80)
+		(output)
+		(text "isJALR" (rect 0 0 33 12)(font "Arial" ))
+		(text "isJALR" (rect 138 75 171 87)(font "Arial" ))
+		(line (pt 192 80)(pt 176 80)(line_width 1))
+	)
+	(port
+		(pt 192 96)
+		(output)
+		(text "isJAL" (rect 0 0 24 12)(font "Arial" ))
+		(text "isJAL" (rect 147 91 171 103)(font "Arial" ))
+		(line (pt 192 96)(pt 176 96)(line_width 1))
+	)
+	(port
+		(pt 192 112)
+		(output)
+		(text "isAUIPC" (rect 0 0 36 12)(font "Arial" ))
+		(text "isAUIPC" (rect 135 107 171 119)(font "Arial" ))
+		(line (pt 192 112)(pt 176 112)(line_width 1))
+	)
+	(port
+		(pt 192 128)
+		(output)
+		(text "isLUI" (rect 0 0 21 12)(font "Arial" ))
+		(text "isLUI" (rect 150 123 171 135)(font "Arial" ))
+		(line (pt 192 128)(pt 176 128)(line_width 1))
+	)
+	(port
+		(pt 192 144)
+		(output)
+		(text "isLoad" (rect 0 0 25 12)(font "Arial" ))
+		(text "isLoad" (rect 146 139 171 151)(font "Arial" ))
+		(line (pt 192 144)(pt 176 144)(line_width 1))
+	)
+	(port
+		(pt 192 160)
+		(output)
+		(text "isStore" (rect 0 0 27 12)(font "Arial" ))
+		(text "isStore" (rect 144 155 171 167)(font "Arial" ))
+		(line (pt 192 160)(pt 176 160)(line_width 1))
+	)
+	(port
+		(pt 192 176)
+		(output)
+		(text "isSYSTEM" (rect 0 0 46 12)(font "Arial" ))
+		(text "isSYSTEM" (rect 125 171 171 183)(font "Arial" ))
+		(line (pt 192 176)(pt 176 176)(line_width 1))
+	)
+	(port
+		(pt 192 192)
+		(output)
+		(text "Uimm[31..0]" (rect 0 0 48 12)(font "Arial" ))
+		(text "Uimm[31..0]" (rect 123 187 171 199)(font "Arial" ))
+		(line (pt 192 192)(pt 176 192)(line_width 3))
+	)
+	(port
+		(pt 192 208)
+		(output)
+		(text "Iimm[31..0]" (rect 0 0 43 12)(font "Arial" ))
+		(text "Iimm[31..0]" (rect 128 203 171 215)(font "Arial" ))
+		(line (pt 192 208)(pt 176 208)(line_width 3))
+	)
+	(port
+		(pt 192 224)
+		(output)
+		(text "Simm[31..0]" (rect 0 0 47 12)(font "Arial" ))
+		(text "Simm[31..0]" (rect 124 219 171 231)(font "Arial" ))
+		(line (pt 192 224)(pt 176 224)(line_width 3))
+	)
+	(port
+		(pt 192 240)
+		(output)
+		(text "Bimm[31..0]" (rect 0 0 47 12)(font "Arial" ))
+		(text "Bimm[31..0]" (rect 124 235 171 247)(font "Arial" ))
+		(line (pt 192 240)(pt 176 240)(line_width 3))
+	)
+	(port
+		(pt 192 256)
+		(output)
+		(text "Jimm[31..0]" (rect 0 0 46 12)(font "Arial" ))
+		(text "Jimm[31..0]" (rect 125 251 171 263)(font "Arial" ))
+		(line (pt 192 256)(pt 176 256)(line_width 3))
+	)
+	(port
+		(pt 192 272)
+		(output)
+		(text "rs1Id[4..0]" (rect 0 0 40 12)(font "Arial" ))
+		(text "rs1Id[4..0]" (rect 131 267 171 279)(font "Arial" ))
+		(line (pt 192 272)(pt 176 272)(line_width 3))
+	)
+	(port
+		(pt 192 288)
+		(output)
+		(text "rs2Id[4..0]" (rect 0 0 41 12)(font "Arial" ))
+		(text "rs2Id[4..0]" (rect 130 283 171 295)(font "Arial" ))
+		(line (pt 192 288)(pt 176 288)(line_width 3))
+	)
+	(port
+		(pt 192 304)
+		(output)
+		(text "rdId[4..0]" (rect 0 0 36 12)(font "Arial" ))
+		(text "rdId[4..0]" (rect 135 299 171 311)(font "Arial" ))
+		(line (pt 192 304)(pt 176 304)(line_width 3))
+	)
+	(port
+		(pt 192 320)
+		(output)
+		(text "funct3[2..0]" (rect 0 0 44 12)(font "Arial" ))
+		(text "funct3[2..0]" (rect 127 315 171 327)(font "Arial" ))
+		(line (pt 192 320)(pt 176 320)(line_width 3))
+	)
+	(port
+		(pt 192 336)
+		(output)
+		(text "funct7[6..0]" (rect 0 0 44 12)(font "Arial" ))
+		(text "funct7[6..0]" (rect 127 331 171 343)(font "Arial" ))
+		(line (pt 192 336)(pt 176 336)(line_width 3))
+	)
+	(drawing
+		(rectangle (rect 16 16 176 352)(line_width 1))
+	)
+)
