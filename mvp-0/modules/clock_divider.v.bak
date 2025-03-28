@@ -3,7 +3,7 @@ module clock_divider
   input CLK,      // Board CLK pin
   input RESET,    // Board RESET pin
 
-  output clk
+  output clk,
 );
 
 parameter SLOW = 0;
@@ -21,7 +21,6 @@ generate
     assign clk = slow_CLK[slow_bit];
 
   end
-endgenerate
-endmodule
+
   // I may be missing some ifdefs for bench contexts
   // gh/BrunoLevy/learn-fpga/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RICSV/clockworks.v
