@@ -1,0 +1,113 @@
+$date
+	Thu Mar 27 10:42:58 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_alu $end
+$var wire 32 ! Q [31:0] $end
+$var wire 1 " EQM_U $end
+$var wire 1 # EQM $end
+$var wire 1 $ EQ $end
+$var reg 32 % A [31:0] $end
+$var reg 32 & B [31:0] $end
+$var reg 3 ' func3 [2:0] $end
+$var reg 7 ( func7 [6:0] $end
+$var reg 7 ) opcode [6:0] $end
+$var reg 5 * shamt [4:0] $end
+$scope module dut $end
+$var wire 32 + A [31:0] $end
+$var wire 32 , B [31:0] $end
+$var wire 3 - func3 [2:0] $end
+$var wire 7 . func7 [6:0] $end
+$var wire 7 / opcode [6:0] $end
+$var wire 5 0 shamt [4:0] $end
+$var reg 1 $ EQ $end
+$var reg 1 # EQM $end
+$var reg 1 " EQM_U $end
+$var reg 32 1 Q [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b11 1
+bx 0
+b110011 /
+b0 .
+b0 -
+b10 ,
+b1 +
+bx *
+b110011 )
+b0 (
+b0 '
+b10 &
+b1 %
+0$
+0#
+1"
+b11 !
+$end
+#20000
+b11111111111111111111111111111111 !
+b11111111111111111111111111111111 1
+b100000 (
+b100000 .
+#40000
+b0 !
+b0 1
+b0 (
+b0 .
+b111 '
+b111 -
+#60000
+b11 !
+b11 1
+b110 '
+b110 -
+#80000
+b100 '
+b100 -
+#100000
+b10 !
+b10 1
+b1 *
+b1 0
+b1 '
+b1 -
+#120000
+b0 !
+b0 1
+b101 '
+b101 -
+#140000
+b100000 (
+b100000 .
+#160000
+0"
+1#
+b110 &
+b110 ,
+b11111111111111111111111111111001 %
+b11111111111111111111111111111001 +
+b10 '
+b10 -
+#180000
+1"
+0#
+b1 !
+b1 1
+b11 &
+b11 ,
+b10 %
+b10 +
+b11 '
+b11 -
+#200000
