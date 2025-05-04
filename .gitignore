@@ -1,0 +1,4 @@
+amaranth/Modules/Register_Bank/regbank.py
+amaranth/tools/elf2hex.py
+amaranth/env.sh
+amaranth/tools/riscv_assembler.py

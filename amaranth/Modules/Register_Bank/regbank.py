@@ -1,33 +1,38 @@
 from amaranth import *
+from amaranth_boards import arty_a7
 
 class RegBank (Elaboratable):
+
+    rs1_data = Signal(32)
+    rs2_data = Signal(32)
+    rd_data = Signal(32)
+
+    rs1_addr = Signal(5)
+    rs2_addr = Signal(5)
+    rd_addr = Signal(5)
+
+    we = Signal(1)
+
     def __init__(self):
-        self.bank = Signal(32)
         pass
 
     def elaborate (self, platform):
-        rs1_data = Signal(32)
-        rs2_data = Signal(32)
-        rd_data = Signal(32)
+        m = Module()
 
-        rs1_addr = Signal(5)
-        rs2_addr = Signal(5)
-        rd_addr = Signal(5)
-
-        we = Signal(1)
-
-        regBank = Array([Signal(32) for x in range(32)])
+        regBank = Array([Signal(32) for x in range(32)],)
+        regBank[0].eq(0) #esta línea no funciona y no sé por qué
 
         # the reading process is combinational, so we can use the combinational domain
         m.d.comb += [
-            rs1_data.eq(regBank[rs1_addr]),
-            rs2_data.eq(regBank[rs2_addr]),
+            self.rs1_data.eq(regBank[self.rs1_addr]),
+            self.rs2_data.eq(regBank[self.rs2_addr]),
         ]
 
         # the writing process is clk-syncronous, so we can use the sync domain
-        with m.If(we):
+        with m.If((self.we) & (self.rd_addr != 0)):
             m.d.sync += [
-                regBank[rd_addr].eq(rd_data),
+                regBank[self.rd_addr].eq(self.rd_data),
             ]
 
-        m = Module()
+        return m
+
