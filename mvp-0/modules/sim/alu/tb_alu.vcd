@@ -1,5 +1,5 @@
 $date
-	Thu Mar 27 10:42:58 2025
+	Sun May 04 23:08:27 2025
 $end
 $version
 	Icarus Verilog
@@ -16,98 +16,122 @@ $var reg 32 % A [31:0] $end
 $var reg 32 & B [31:0] $end
 $var reg 3 ' func3 [2:0] $end
 $var reg 7 ( func7 [6:0] $end
-$var reg 7 ) opcode [6:0] $end
-$var reg 5 * shamt [4:0] $end
+$var reg 1 ) isALUimm $end
+$var reg 1 * isALUreg $end
+$var reg 1 + isAUIPC $end
+$var reg 1 , isBranch $end
+$var reg 1 - isJAL $end
+$var reg 1 . isJALR $end
+$var reg 1 / isLUI $end
+$var reg 1 0 isLoad $end
+$var reg 1 1 isStore $end
+$var reg 5 2 shamt [4:0] $end
 $scope module dut $end
-$var wire 32 + A [31:0] $end
-$var wire 32 , B [31:0] $end
-$var wire 3 - func3 [2:0] $end
-$var wire 7 . func7 [6:0] $end
-$var wire 7 / opcode [6:0] $end
-$var wire 5 0 shamt [4:0] $end
+$var wire 32 3 A [31:0] $end
+$var wire 32 4 B [31:0] $end
+$var wire 3 5 func3 [2:0] $end
+$var wire 7 6 func7 [6:0] $end
+$var wire 1 ) isALUimm $end
+$var wire 1 * isALUreg $end
+$var wire 1 + isAUIPC $end
+$var wire 1 , isBranch $end
+$var wire 1 - isJAL $end
+$var wire 1 . isJALR $end
+$var wire 1 / isLUI $end
+$var wire 1 0 isLoad $end
+$var wire 1 1 isStore $end
+$var wire 5 7 shamt [4:0] $end
 $var reg 1 $ EQ $end
 $var reg 1 # EQM $end
 $var reg 1 " EQM_U $end
-$var reg 32 1 Q [31:0] $end
+$var reg 32 8 Q [31:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
-$comment Show the parameter values. $end
-$dumpall
-$end
 #0
 $dumpvars
-b11 1
-bx 0
-b110011 /
-b0 .
-b0 -
-b10 ,
-b1 +
-bx *
-b110011 )
+b11 8
+b0 7
+b0 6
+b0 5
+b10 4
+b1 3
+b0 2
+01
+00
+0/
+0.
+0-
+0,
+0+
+1*
+0)
 b0 (
 b0 '
 b10 &
 b1 %
-0$
-0#
-1"
+x$
+x#
+x"
 b11 !
 $end
-#20000
+#10000
 b11111111111111111111111111111111 !
-b11111111111111111111111111111111 1
+b11111111111111111111111111111111 8
 b100000 (
-b100000 .
-#40000
+b100000 6
+#20000
 b0 !
-b0 1
+b0 8
 b0 (
-b0 .
+b0 6
 b111 '
-b111 -
-#60000
+b111 5
+#30000
 b11 !
-b11 1
+b11 8
 b110 '
-b110 -
-#80000
+b110 5
+#40000
+b11 !
+b11 8
 b100 '
-b100 -
-#100000
+b100 5
+#50000
 b10 !
-b10 1
-b1 *
-b1 0
+b10 8
+b1 2
+b1 7
 b1 '
-b1 -
-#120000
+b1 5
+#60000
 b0 !
-b0 1
+b0 8
 b101 '
-b101 -
-#140000
+b101 5
+#70000
+b1111111111111111111111111111000 !
+b1111111111111111111111111111000 8
+b11111111111111111111111111110000 %
+b11111111111111111111111111110000 3
 b100000 (
-b100000 .
-#160000
-0"
-1#
-b110 &
-b110 ,
-b11111111111111111111111111111001 %
-b11111111111111111111111111111001 +
-b10 '
-b10 -
-#180000
-1"
-0#
+b100000 6
+#80000
 b1 !
-b1 1
+b1 8
 b11 &
-b11 ,
+b11 4
+b11111111111111111111111111111011 %
+b11111111111111111111111111111011 3
+b0 (
+b0 6
+b10 '
+b10 5
+#90000
+b1 !
+b1 8
 b10 %
-b10 +
+b10 3
 b11 '
-b11 -
-#200000
+b11 5
+#100000

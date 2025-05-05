@@ -4,8 +4,17 @@ module tb_alu;
     reg [31:0] A, B;
     reg [2:0] func3;
     reg [6:0] func7;
-    reg [6:0] opcode;
     reg [4:0] shamt;
+    
+    reg isALUreg;
+    reg isALUimm;
+    reg isBranch;
+    reg isJALR;
+    reg isJAL;
+    reg isAUIPC;
+    reg isLUI;
+    reg isLoad;
+    reg isStore;
 
     wire EQ, EQM, EQM_U;
     wire [31:0] Q;
@@ -15,8 +24,16 @@ module tb_alu;
         .B(B),
         .func3(func3),
         .func7(func7),
-        .opcode(opcode),
         .shamt(shamt),
+        .isALUreg(isALUreg),
+        .isALUimm(isALUimm),
+        .isBranch(isBranch),
+        .isJALR(isJALR),
+        .isJAL(isJAL),
+        .isAUIPC(isAUIPC),
+        .isLUI(isLUI),
+        .isLoad(isLoad),
+        .isStore(isStore),
         .EQ(EQ),
         .EQM(EQM),
         .EQM_U(EQM_U),
@@ -27,95 +44,79 @@ module tb_alu;
         $dumpfile("tb_alu.vcd");
         $dumpvars(0, tb_alu);
 
-        // Test 1: ADD (opcode = 0110011, func3 = 000, func7 = 0000000)
+        isALUreg = 0; 
+        isALUimm = 0; 
+        isBranch = 0; 
+        isJALR = 0; 
+        isJAL = 0;
+        isAUIPC = 0; 
+        isLUI = 0; 
+        isLoad = 0; 
+        isStore = 0;
+
+        // Test 1: ADD (func3 = 000, func7 = 0000000)
         A = 32'h00000001;
         B = 32'h00000002;
-        opcode = 7'b0110011;
         func3 = 3'b000;
         func7 = 7'b0000000;
+        shamt = 0;
+        isALUreg = 1;
         #10;
-        $display("Test 1: ADD (opcode = 0110011, func3 = 000, func7 = 0000000)");
-        $display("Time %0t: ADD -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("ADD -> A = %h, B = %h, Q = %h", A, B, Q);
 
-        #10;
-
-        // Test 2: SUB (opcode = 0110011, func3 = 000, func7 = 0100000)
+        // Test 2: SUB (func3 = 000, func7 = 0100000)
         func7 = 7'b0100000;
         #10;
-        $display("Test 2: SUB (opcode = 0110011, func3 = 000, func7 = 0100000)");
-        $display("Time %0t: SUB -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("SUB -> A = %h, B = %h, Q = %h", A, B, Q);
 
-        #10;
-
-        // Test 3: AND (opcode = 0110011, func3 = 111, func7 = 0000000)
+        // Test 3: AND (func3 = 111)
         func3 = 3'b111;
         func7 = 7'b0000000;
         #10;
-        $display("Test 3: AND (opcode = 0110011, func3 = 111, func7 = 0000000)");
-        $display("Time %0t: AND -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("AND -> A = %h, B = %h, Q = %h", A, B, Q);
 
-        #10;
-
-        // Test 4: OR (opcode = 0110011, func3 = 110, func7 = 0000000)
+        // Test 4: OR (func3 = 110)
         func3 = 3'b110;
         #10;
-        $display("Test 4: OR (opcode = 0110011, func3 = 110, func7 = 0000000)");
-        $display("Time %0t: OR -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("OR -> A = %h, B = %h, Q = %h", A, B, Q);
 
-        #10;
-
-        // Test 5: XOR (opcode = 0110011, func3 = 100, func7 = 0000000)
+        // Test 5: XOR (func3 = 100)
         func3 = 3'b100;
         #10;
-        $display("Test 5: XOR (opcode = 0110011, func3 = 100, func7 = 0000000)");
-        $display("Time %0t: XOR -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("XOR -> A = %h, B = %h, Q = %h", A, B, Q);
 
-        #10;
-
-        // Test 6: SLL (opcode = 0110011, func3 = 001, func7 = 0000000)
+        // Test 6: SLL (func3 = 001)
         func3 = 3'b001;
-        shamt = 5'b00001;
+        shamt = 5'd1;
         #10;
-        $display("Test 6: SLL (opcode = 0110011, func3 = 001, func7 = 0000000)");
-        $display("Time %0t: SLL -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("SLL -> A = %h, shamt = %d, Q = %h", A, shamt, Q);
 
-        #10;
-
-        // Test 7: SRL (opcode = 0110011, func3 = 101, func7 = 0000000)
+        // Test 7: SRL (func3 = 101, func7 = 0000000)
         func3 = 3'b101;
+        func7 = 7'b0000000;
         #10;
-        $display("Test 7: SRL (opcode = 0110011, func3 = 101, func7 = 0000000)");
-        $display("Time %0t: SRL -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("SRL -> A = %h, shamt = %d, Q = %h", A, shamt, Q);
 
-        #10;
-
-        // Test 8: SRA (opcode = 0110011, func3 = 101, func7 = 0100000)
+        // Test 8: SRA (func3 = 101, func7 = 0100000)
         func7 = 7'b0100000;
+        A = 32'hFFFFFFF0;  // valor negativo
         #10;
-        $display("Test 8: SRA (opcode = 0110011, func3 = 101, func7 = 0100000)");
-        $display("Time %0t: SRA -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("SRA -> A = %h, shamt = %d, Q = %h", A, shamt, Q);
 
-        #10;
-
-        // Test 9: SLT (opcode = 0110011, func3 = 010, func7 = 0000000)
+        // Test 9: SLT (signed comparison)
         func3 = 3'b010;
-        A = -7;
-        B = 6;
+        func7 = 7'b0000000;
+        A = -5;
+        B = 3;
         #10;
-        $display("Test 9: SLT (opcode = 0110011, func3 = 010, func7 = 0000000)");
-        $display("Time %0t: SLT -> A = %h, B = %h, Q = %h", $time, A, B, Q);
+        $display("SLT -> A = %h, B = %h, Q = %h", A, B, Q);
 
-        #10;
-
-        // Test 10: SLTU (opcode = 0110011, func3 = 011, func7 = 0000000)
+        // Test 10: SLTU (unsigned comparison)
         func3 = 3'b011;
         A = 2;
         B = 3;
         #10;
-        $display("Test 10: SLTU (opcode = 0110011, func3 = 011, func7 = 0000000)");
-        $display("Time %0t: SLTU -> A = %h, B = %h, Q = %h", $time, A, B, Q);
-
-        #10;
+        $display("SLTU -> A = %h, B = %h, Q = %h", A, B, Q);
 
         $finish;
     end
