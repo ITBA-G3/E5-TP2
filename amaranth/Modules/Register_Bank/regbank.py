@@ -20,7 +20,6 @@ class RegBank (Elaboratable):
         m = Module()
 
         regBank = Array([Signal(32) for x in range(32)],)
-        regBank[0].eq(0) #esta línea no funciona y no sé por qué
 
         # the reading process is combinational, so we can use the combinational domain
         m.d.comb += [
