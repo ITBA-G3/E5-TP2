@@ -1,0 +1,7 @@
+[dumpfile] "C:\Users\lucia\ITBA-Cursada\2025-1C\E5\E5-TP2\amaranth\Modules\Fetch\fetch.vcd"
+[dumpfile_size] 11619
+[treeopen] top.
+@22
+bench.top.pc[31:0]
+bench.top.instr[31:0]
+bench.top.resetn
