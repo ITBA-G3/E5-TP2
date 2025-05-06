@@ -1,13 +1,12 @@
 from amaranth import *
+from amaranth.lib import wiring
+from amaranth.lib.wiring import In, Out
 # remember to do platform imports here
 
-class Fetch(Elaboratable):
-    def __init__(self):
-        # self.clk = ClockSignal()
-        # i think i can use the sync domain's ClockSignal
-        self.resetn = Signal()
-        self.instr = Signal(32)
-        self.pc = Signal(32)
+class Fetch(wiring.Component):
+    resetn: In(1)
+    instr: Out(32)
+    pc: Out(32)
 
     def elaborate(self, platform):
         m = Module()
@@ -18,7 +17,6 @@ class Fetch(Elaboratable):
             0b0000000_00000_00000_000_00001_0110011,    # add x1, x0, x0
             0b000000000001_00001_000_00001_0010011,    # addi x1, x1, 1
         ] + [0]*(256-3)) # zero pad the rest
-
 
         rdport = mem.read_port()
         m.submodules.rdport = rdport
