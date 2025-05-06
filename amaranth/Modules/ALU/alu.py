@@ -1,28 +1,29 @@
 from amaranth import *
-#from amaranth_boards import arty_a7
+from amaranth.lib import wiring
+from amaranth.lib.wiring import In, Out
+from amaranth_boards import arty_a7
 
-class ALU(Elaboratable):
-    def __init__(self):
-        self.A = Signal(32)
-        self.B = Signal(32)
-        self.func3 = Signal(3)
-        self.func7 = Signal(7)
-        self.shamt = Signal(5)
+class ALU(wiring.Component):
+    A: In(32)
+    B: In(32)
+    func3: In(3)
+    func7: In(7)
+    shamt: In(5)
 
-        self.isALUreg = Signal()
-        self.isALUimm = Signal()
-        self.isBranch = Signal()
-        self.isJALR   = Signal()
-        self.isJAL    = Signal()
-        self.isAUIPC  = Signal()
-        self.isLUI    = Signal()
-        self.isLoad   = Signal()
-        self.isStore  = Signal()
+    isALUreg: In(1)
+    isALUimm: In(1)
+    isBranch: In(1)
+    isJALR: In(1)
+    isJAL: In(1)
+    isAUIPC: In(1)
+    isLUI: In(1)
+    isLoad: In(1)
+    isStore: In(1)
 
-        self.Q = Signal(32)
-        self.EQ = Signal()
-        self.EQM = Signal()
-        self.EQM_U = Signal()
+    Q: Out(32)
+    EQ: Out(1)
+    EQM: Out(1)
+    EQM_U: Out(1)
 
     def elaborate(self, platform):
         m = Module()
