@@ -1,20 +1,19 @@
 from amaranth import *
+from amaranth.lib import wiring
+from amaranth.lib.wiring import In, Out
 from amaranth_boards import arty_a7
 
-class RegBank (Elaboratable):
+class RegBank (wiring.Component):
 
-    rs1_data = Signal(32)
-    rs2_data = Signal(32)
-    rd_data = Signal(32)
+    rs1_data: Out(32)
+    rs2_data: Out(32)
+    rd_data: In(32)
 
-    rs1_addr = Signal(5)
-    rs2_addr = Signal(5)
-    rd_addr = Signal(5)
+    rs1_addr: In(5)
+    rs2_addr: In(5)
+    rd_addr: In(5)
 
-    we = Signal(1)
-
-    def __init__(self):
-        pass
+    we: In(1)
 
     def elaborate (self, platform):
         m = Module()
