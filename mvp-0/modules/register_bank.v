@@ -10,7 +10,7 @@ module reg_bank(input wire clk,             // clock signal
                 output reg [31:0] rs2_data);
 
     reg [31:0] regBank [0:31];
-    // the reading process is done with a clk-syncronous block
+    // the writing process is done with a clk-syncronous block
     // 
     always @(posedge clk) begin
         if(wr_en && rdId != 0) begin
