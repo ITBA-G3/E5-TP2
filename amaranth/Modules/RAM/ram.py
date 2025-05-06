@@ -1,16 +1,27 @@
 from amaranth import *
 from amaranth_boards import arty_a7
+from amaranth.lib import wiring
+from amaranth.lib.wiring import In, Out
 
-class RAM(Elaboratable):
+class RAM(wiring.Component):
+    read_en: In(1)
+    write_en: In(1)
     
-    def __init__(self):
-        self.read_en = Signal(1)
-        self.write_en = Signal(1)
-        self.addr_reg = Signal(32)
-        self.data_in_reg = Signal(32)
-        self.data_out_reg = Signal(32)
+    addr_reg: In(32)
+    data_in_reg: In(32)
+    data_out_reg: Out(32)
         
-        # Define the RAM size and address width
+    # If wiring.Component is not used, the following lines should be uncommented
+    # def __init__(self):    
+    #     # Define the RAM size and address width
+    
+    # self.read_en = Signal(1)
+    # self.write_en = Signal(1)
+    # self.addr_reg = Signal(32)
+    # self.data_in_reg = Signal(32)
+    # self.data_out_reg = Signal(32)
+        
+    def elaborate(self, platform):
         ram_size = 256
         word_size = 32   # 4 byte words
         
@@ -19,7 +30,6 @@ class RAM(Elaboratable):
         self.read_port = self.ram.read_port()
         self.write_port = self.ram.write_port()
         
-    def elaborate(self, platform):
         m = Module()
         
         # Link the ports to the module
