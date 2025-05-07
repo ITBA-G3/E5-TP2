@@ -1,13 +1,16 @@
 from amaranth import *
-# remember to do platform imports here
+from bus_signatures import fetch_decode, fetch_operand_b
+from amaranth.lib import wiring
+from amaranth.lib.wiring import In, Out
+# remember to do platform imports here 
 
-class Fetch(Elaboratable):
-    def __init__(self):
+class Fetch(wiring.Component):
         # self.clk = ClockSignal()
         # i think i can use the sync domain's ClockSignal
-        self.resetn = Signal()
-        self.instr = Signal(32)
-        self.pc = Signal(32)
+   
+        instr : Out(fetch_decode())
+        pc : Out(fetch_operand_b()) 
+        resetn : In(1)
 
     def elaborate(self, platform):
         m = Module()
