@@ -8,19 +8,20 @@ class Fetch(wiring.Component):
         # self.clk = ClockSignal()
         # i think i can use the sync domain's ClockSignal
    
-        instr : Out(fetch_decode())
-        pc : Out(fetch_operand_b()) 
-        resetn : In(1)
+    instr : Out(fetch_decode())
+    pc : Out(fetch_operand_b()) 
+    resetn : In(1)
 
     def elaborate(self, platform):
         m = Module()
 
         # 256-word 32-bit wide instr mem
         mem = Memory(width=32, depth=256, init=[
-            0b0000000_00000_00000_000_00000_0110011,    # nop
+            0b0000000_00000_00001_000_00001_1101111,    # jal x1, 0
+            0b0000000_00000_00001_000_00000_0000000,    # nop
             0b0000000_00000_00000_000_00001_0110011,    # add x1, x0, x0
-            0b000000000001_00001_000_00001_0010011,    # addi x1, x1, 1
-        ] + [0]*(256-3)) # zero pad the rest
+            0b0000000_00001_00001_000_00001_0010011,    # addi x1, x1, 1
+        ] + [0]*(256-4)) # zero pad the rest
 
 
         rdport = mem.read_port()
@@ -28,10 +29,10 @@ class Fetch(wiring.Component):
 
         with m.If(~self.resetn):
             m.d.sync += [
-                self.instr.eq(rdport.data),
-                self.pc.eq(self.pc + 1)
+                self.instr.instr.eq(rdport.data),
+                self.pc.pc.eq(self.pc.pc + 1)
             ]
 
-        m.d.comb += rdport.addr.eq(self.pc)
+        m.d.comb += rdport.addr.eq(self.pc.pc)
 
         return m

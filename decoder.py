@@ -1,11 +1,11 @@
 from amaranth import *
-from signatures_test import decode_alu_flags, decode_reg_addr, decode_alu_fun, decode_imm
+from bus_signatures import decode_alu_flags, decode_reg_addr, decode_alu_fun, decode_imm, fetch_decode
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
 class Decoder(wiring.Component):
     
-    instr: In(32)     # 32-bit instruction
+    instr: In(fetch_decode())     # 32-bit instruction
     
     # self.isALUreg = Signal()    # Example control signal
     # self.isALUimm = Signal()
@@ -46,7 +46,7 @@ class Decoder(wiring.Component):
         m.domains.sync = ClockDomain("sync")
 
         # Decode instruction from opcode bits ([0:7] 6 bits menos significativos)
-        opcode = self.instr[0:7]
+        opcode = self.instr.instr[0:7]
         
         m.d.comb += [
             self.alu_flags.isALUreg.eq(opcode == 0b0110011),         
@@ -63,21 +63,21 @@ class Decoder(wiring.Component):
         
         # Register fields
         m.d.comb += [
-            self.reg_addr.rs1_addr.eq(self.instr[15:20]),
-            self.reg_addr.rs2_addr.eq(self.instr[20:25]),
-            self.reg_addr.rd_addr.eq(self.instr[7:12]),
+            self.reg_addr.rs1_addr.eq(self.instr.instr[15:20]),
+            self.reg_addr.rs2_addr.eq(self.instr.instr[20:25]),
+            self.reg_addr.rd_addr.eq(self.instr.instr[7:12]),
 
-            self.functions.func3.eq(self.instr[12:15]),
-            self.functions.func7.eq(self.instr[25:32]),
+            self.functions.func3.eq(self.instr.instr[12:15]),
+            self.functions.func7.eq(self.instr.instr[25:32]),
         ]
 
         # Immediate values (sign-extended)
         m.d.comb += [
-            self.imm_data.Iimm.eq(Cat(self.instr[20:32], self.instr[31].replicate(20))),
-            self.imm_data.Simm.eq(Cat(self.instr[7:12], self.instr[25:32], self.instr[31].replicate(20))),
-            self.imm_data.Bimm.eq(Cat(C(0, 1), self.instr[8:12], self.instr[25:31], self.instr[7], self.instr[31].replicate(19))),
-            self.imm_data.Uimm.eq(Cat(C(0, 12), self.instr[12:32])),
-            self.imm_data.Jimm.eq(Cat(C(0, 1), self.instr[21:31], self.instr[20], self.instr[12:20], self.instr[31].replicate(11))),
+            self.imm_data.Iimm.eq(Cat(self.instr.instr[20:32], self.instr.instr[31].replicate(20))), 
+            self.imm_data.Simm.eq(Cat(self.instr.instr[7:12], self.instr.instr[25:32], self.instr.instr[31].replicate(20))),
+            self.imm_data.Bimm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
+            self.imm_data.Uimm.eq(Cat(C(0, 12), self.instr.instr[12:32])),
+            self.imm_data.Jimm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
         ]
         
         return m

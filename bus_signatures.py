@@ -2,14 +2,22 @@ from amaranth import *
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out, Signature
 
-class alu_regbank(wiring.Signature):
+class operand_b_regbank(wiring.Signature):
     def __init__(self):
         super().__init__({
             "rs1_data": Out(32),
-            "rs2_data": Out(32),
-            "rd_data": In(32)
+            "rs2_data": Out(32)
         })
     
+    def __eq__(self, other):
+        return self.members == other.members
+            
+class alu_regbank(wiring.Signature):
+    def __init__(self):
+        super().__init__({            
+            "rd_data": Out(32)
+        })
+        
     def __eq__(self, other):
         return self.members == other.members
             
@@ -37,6 +45,13 @@ class decode_reg_addr(wiring.Signature):
             "rs2_addr": Out(5),
             "rd_addr": Out(5)
         })
+        
+class operand_b_alu(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "A": Out(32),
+            "B": Out(32)
+        })
     
     def __eq__(self, other):
         return self.members == other.members
@@ -60,6 +75,42 @@ class decode_imm(wiring.Signature):
             "Simm": Out(32),
             "Bimm": Out(32),
             "Jimm": Out(32)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+    
+class fetch_decode(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "instr": Out(32)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+    
+class fetch_operand_b(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "pc" : Out(32)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+    
+class operand_b_mux(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "muxA": Out(1),
+                        # rs1   -> 0b0
+                        # pc    -> 0b1
+            "muxB": Out(3)
+                        # rs2   -> 0b000
+                        # immI  -> 0b001
+                        # immU  -> 0b010
+                        # immS  -> 0b011
+                        # immB  -> 0b100
+                        # immJ  -> 0b101
         })
     
     def __eq__(self, other):
