@@ -13,7 +13,40 @@ async def proc(ctx):
     
     ctx.set(top.regbank.we, 1)
     
-    
+    await ctx.tick().repeat(2)
+    print("-------JAL--------------")
+    print("instr: {:032b}".format(ctx.get(top.decoder.instr.instr)))
+    print("------------------------")
+    print(f"alu_A: {ctx.get(top.alu.data_buses.A)}")
+    print(f"alu_B: {ctx.get(top.alu.data_buses.B)}")
+    await ctx.tick() # NOP -> estaba en la memoria del fetch
+    print("------------------------")
+    print(f"rs1_addr: {ctx.get(top.regbank.reg_addr.rs1_addr)}")
+    print(f"rs1_data: {ctx.get(top.regbank.rs_buses.rs1_data)}")
+    print(f"rs2_addr: {ctx.get(top.regbank.reg_addr.rs2_addr)}")
+    print(f"rs2_data: {ctx.get(top.regbank.rs_buses.rs2_data)}")
+    print("------------------------")
+    print(f"rd_addr: {ctx.get(top.regbank.reg_addr.rd_addr)}")
+    print(f"rd_data: {ctx.get(top.regbank.rd_bus.rd_data)}")
+    ctx.set(top.opbuilder.muxes.muxB, 0b001)    # B = rs2    
+
+    await ctx.tick() # ADDI
+    print("-------ADDI: I = 7------")
+    print("instr: {:032b}".format(ctx.get(top.decoder.instr.instr)))
+    print("------------------------")
+    print(f"opbuild_imm: {ctx.get(top.opbuilder.imm.Iimm)}")
+    print(f"alu_A: {ctx.get(top.alu.data_buses.A)}")
+    print(f"alu_B: {ctx.get(top.alu.data_buses.B)}")
+    await ctx.tick() #ADD
+    print("------------------------")
+    print(f"rs1_addr: {ctx.get(top.regbank.reg_addr.rs1_addr)}")
+    print(f"rs1_data: {ctx.get(top.regbank.rs_buses.rs1_data)}")
+    print(f"rs2_addr: {ctx.get(top.regbank.reg_addr.rs2_addr)}")
+    print(f"rs2_data: {ctx.get(top.regbank.rs_buses.rs2_data)}")
+    print("------------------------")
+    print(f"rd_addr: {ctx.get(top.regbank.reg_addr.rd_addr)}")
+    print(f"rd_data: {ctx.get(top.regbank.rd_bus.rd_data)}")
+
     # ctx.set(top.decoder.instr, 0b000000_00000_00001_000_00001_1101111)
     # ctx.set(top.alu.isALUreg, 0)
     # ctx.set(top.alu.isALUimm, 0)
@@ -23,22 +56,7 @@ async def proc(ctx):
     # ctx.set(top.regbank.rd_addr, 2)
     # ctx.set(top.alu.func7, 0)
     # ctx.set(top.alu.func3, 0)
-    await ctx.tick().repeat(2)
     
-    print("JAL harcoded in fetch -> expected 4 in rs1_data")
-    print("instr: {:032b}".format(ctx.get(top.decoder.instr.instr)))
-    print("------------------------")
-    print(f"alu_A: {ctx.get(top.alu.data_buses.A)}")
-    print(f"alu_B: {ctx.get(top.alu.data_buses.B)}")
-    await ctx.tick()
-    print("------------------------")
-    print(f"rs1_addr: {ctx.get(top.regbank.reg_addr.rs1_addr)}")
-    print(f"rs1_data: {ctx.get(top.regbank.rs_buses.rs1_data)}")
-    print(f"rs2_addr: {ctx.get(top.regbank.reg_addr.rs2_addr)}")
-    print(f"rs2_data: {ctx.get(top.regbank.rs_buses.rs2_data)}")
-    print("------------------------")
-    print(f"rd_addr: {ctx.get(top.regbank.reg_addr.rd_addr)}")
-    print(f"rd_data: {ctx.get(top.regbank.rd_bus.rd_data)}")
     
     
 
