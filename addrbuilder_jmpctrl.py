@@ -1,0 +1,49 @@
+from amaranth import *
+from bus_signatures import decode_alu_flags, operand_b_regbank, alu_regbank, imm_data, addrbuilder_enable, fetch_operand_b
+from amaranth.lib import wiring
+from amaranth.lib.wiring import In, Out
+
+class addrbuilder(wiring.Component):
+    
+    PC_out: Out(PC_in())
+    
+    PC_in: In(fetch_operand_b())        # ESTE ES EL PC QUE SALE DEL FETCH Y VA AL OP BUILDER
+    
+    instr_flags: In(decode_alu_flags())
+
+    imm_data: In(imm_data())
+
+
+    alu_out: In(alu_regbank())          # ALU output data: not sure if i need it
+    
+    rs_data: In(operand_b_regbank())    # rs_1 y rs_2 data: needed to build the address
+
+
+    addrbuilder_enable: In(1)  # Enable signal for the addrbuilder TODO: Control Signal
+
+    isSystem = Signal()
+
+    def elaborate(self, platform):
+        m = Module()
+        
+        m.domains.sync = ClockDomain("sync")
+
+        with m.If(self.addrbuilder_enable): # TODO: Control Signal
+
+            with m.If(self.instr_flags.isALUreg | self.instr_flags.isALUimm | self.instr_flags.isLUI):
+                m.d.comb += self.PC_out.eq(self.PC_in + 1)  # For these instr PC needs no special treatment    
+
+            with m.If(self.instr_flags.isBranch):
+                m.d.comb += self.PC_out.eq(self.PC_in + self.imm_data.imm)
+
+            with m.If(self.instr_flags.isJAL):
+                m.d.comb += self.PC_out.eq(self.PC_in + self.imm_data.imm)
+
+            with m.If(self.instr_flags.isJALR):
+                m.d.comb += self.PC_out.eq(self.rs_data.rs1_data + self.imm_data.imm)           # TODO: CHECK NOT SURE
+            
+            with m.If(self.instr_flags.isAUIPC):
+                m.d.comb += self.PC_out.eq(self.PC_in + self.imm_data.imm)
+            
+        
+    return m

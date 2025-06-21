@@ -1,5 +1,5 @@
 from amaranth import *
-from bus_signatures import decode_alu_flags, decode_reg_addr, decode_alu_fun, decode_imm, fetch_decode
+from bus_signatures import decode_alu_flags, decode_reg_addr, decode_alu_fun, fetch_decode
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
@@ -29,17 +29,6 @@ class Decoder(wiring.Component):
     # func7 = Signal(7)
     functions: Out(decode_alu_fun())
 
-    # Iimm = Signal(32)
-    # Uimm = Signal(32)
-    # Simm = Signal(32)
-    # Bimm = Signal(32)
-    # Jimm = Signal(32)
-    imm_data: Out(decode_imm())
-    
-    # Creo que todas estas declaraciones se tienen que hacer porque estoy simulando y quiero acceder 
-    # a estas señales desde el tb entonces tienen que ser parte de la clase "Decoder". No se si
-    # cuando hagamos el wiring tienen que estar estas señales en el constructor o no.
-    
     def elaborate(self, platform):
         m = Module()
         
@@ -71,13 +60,13 @@ class Decoder(wiring.Component):
             self.functions.func7.eq(self.instr.instr[25:32]),
         ]
 
-        # Immediate values (sign-extended)
-        m.d.comb += [
-            self.imm_data.Iimm.eq(Cat(self.instr.instr[20:32], self.instr.instr[31].replicate(20))), 
-            self.imm_data.Simm.eq(Cat(self.instr.instr[7:12], self.instr.instr[25:32], self.instr.instr[31].replicate(20))),
-            self.imm_data.Bimm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
-            self.imm_data.Uimm.eq(Cat(C(0, 12), self.instr.instr[12:32])),
-            self.imm_data.Jimm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
-        ]
+        # # Immediate values (sign-extended)
+        # m.d.comb += [
+        #     self.imm_data.Iimm.eq(Cat(self.instr.instr[20:32], self.instr.instr[31].replicate(20))), 
+        #     self.imm_data.Simm.eq(Cat(self.instr.instr[7:12], self.instr.instr[25:32], self.instr.instr[31].replicate(20))),
+        #     self.imm_data.Bimm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
+        #     self.imm_data.Uimm.eq(Cat(C(0, 12), self.instr.instr[12:32])),
+        #     self.imm_data.Jimm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
+        # ]
         
         return m

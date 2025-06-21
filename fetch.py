@@ -1,5 +1,5 @@
 from amaranth import *
-from bus_signatures import fetch_decode, fetch_operand_b
+from bus_signatures import fetch_decode, fetch_operand_b, pc_update
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 # remember to do platform imports here 
@@ -11,6 +11,7 @@ class Fetch(wiring.Component):
     instr : Out(fetch_decode())
     pc : Out(fetch_operand_b()) 
     resetn : In(1)
+    pc_update : In(pc_update())
 
     def elaborate(self, platform):
         m = Module()
@@ -30,7 +31,7 @@ class Fetch(wiring.Component):
         with m.If(~self.resetn):
             m.d.sync += [
                 self.instr.instr.eq(rdport.data),
-                self.pc.pc.eq(self.pc.pc + 1)
+                self.pc.pc.eq(self.pc_update.pc)        # CHECK
             ]
 
         m.d.comb += rdport.addr.eq(self.pc.pc)
