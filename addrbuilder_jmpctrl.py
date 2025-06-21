@@ -3,7 +3,7 @@ from bus_signatures import decode_alu_flags, operand_b_regbank, alu_regbank, imm
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
-class addrbuilder(wiring.Component):
+class Addrbuilder(wiring.Component):
     
     PC_out: Out(pc_update())
     
@@ -13,8 +13,6 @@ class addrbuilder(wiring.Component):
 
     imm_data: In(imm_data())
 
-
-    alu_out: In(alu_regbank())          # ALU output data: not sure if i need it
     
     rs_data: In(operand_b_regbank())    # rs_1 y rs_2 data: needed to build the address
 
@@ -30,7 +28,7 @@ class addrbuilder(wiring.Component):
 
         # with m.If(self.addrbuilder_enable): # TODO: Control Signal
 
-        with m.If(self.instr_flags.isALUreg | self.instr_flags.isALUimm | self.instr_flags.isLUI | self.instr_flags.isAUIPC):
+        with m.If(self.instr_flags.isALUreg | self.instr_flags.isALUimm | self.instr_flags.isLUI | self.instr_flags.isAUIPC | self.instr_flags.isStore | self.instr_flags.isLoad):
             m.d.comb += [
                 self.PC_out.pc.eq(self.PC_in.pc + 1)  # For these instr PC needs no special treatment    
             ]

@@ -11,8 +11,9 @@ sim.add_clock(1e-6)  # 1 MHz clock
 
 # Test instructions
 test_instructions = [
-    0x00A10093,        # I_type isALUImm    OK        rd = 1, rs1 = 2, imm = 10, funct3 = 0                 funct7 and rs2 not used
-    0x00312023,        # S-type isStore     NOTOK         rs1 = 2, rs2 = 3, imm = 8, funct3 = 2                 funct7 and rd not used
+    0x00A10093,        # I_type isALUImm    OK        rd = 1, rs1 = 2, imm = 10, funct3 = 0
+    
+    0x00312223,        # S-type isStore     OK           rs1 = 2, rs2 = 3, imm = 8, funct3 = 2                 funct7 and rd not used
     
     0x00208663,        # B-type isBranch    OK        rs1 = 1, rs2 = 2, imm = 12, funct3 = 0                funct7 and rd not used
     0x12345037,        # U-type isLUI       OK           rd = 0, imm = 305,418,240                             funct3, funct 7, rs1 and rs2 not used

@@ -1,11 +1,11 @@
 from amaranth import *
 from amaranth.sim import Simulator
 
-from addrbuilder_jmpctrl import addrbuilder
+from addrbuilder_jmpctrl import Addrbuilder
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
-addrbuilder = addrbuilder()
+addrbuilder = Addrbuilder()
 sim = Simulator(addrbuilder)
 sim.add_clock(1e-6)  # 1 MHz clock
 

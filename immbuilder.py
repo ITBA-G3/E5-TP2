@@ -45,9 +45,9 @@ class Immbuilder(wiring.Component):
                 self.imm_data.imm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
             ]
         
-        with m.If(self.instr_flags.isSystem):             # System instructions --> imm = 0
-            m.d.comb += [
-                self.imm_data.imm.eq(0),
-            ]
+        # with m.If(self.isSystem):             # System instructions --> imm = 0
+        #     m.d.comb += [
+        #         self.imm_data.imm.eq(0),
+        #     ]
         
         return m
