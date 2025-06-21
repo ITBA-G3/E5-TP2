@@ -26,17 +26,28 @@ class Immbuilder(wiring.Component):
             ]
             
         with m.If(self.instr_flags.isStore):              # Store instructions --> Simm
-            m.d.comb += self.imm_data.imm.eq(Cat(self.instr.instr[7:12], self.instr.instr[25:32], self.instr.instr[31].replicate(20))),    
-            
+            m.d.comb += [
+                self.imm_data.imm.eq(Cat(self.instr.instr[7:12], self.instr.instr[25:32], self.instr.instr[31].replicate(20))),    
+            ]
+
         with m.If(self.instr_flags.isBranch):             # Conditional Branch instructions --> Bimm
-            m.d.comb += self.imm_data.imm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
-            
+            m.d.comb += [
+                self.imm_data.imm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
+            ]
+
         with m.If(self.instr_flags.isLUI | self.instr_flags.isAUIPC):   # LUI, AUIPC instructions --> Uimm
-            m.d.comb += self.imm_data.imm.eq(Cat(C(0, 12), self.instr.instr[12:32])),
+            m.d.comb += [
+                self.imm_data.imm.eq(Cat(C(0, 12), self.instr.instr[12:32])),
+            ]
 
         with m.If(self.instr_flags.isJAL):                # Unconditional jumps JAL instruction --> Jimm
-            m.d.comb += self.imm_data.imm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
+            m.d.comb += [
+                self.imm_data.imm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
+            ]
         
-        
+        with m.If(self.instr_flags.isSystem):             # System instructions --> imm = 0
+            m.d.comb += [
+                self.imm_data.imm.eq(0),
+            ]
         
         return m

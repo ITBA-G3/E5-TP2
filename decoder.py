@@ -2,32 +2,21 @@ from amaranth import *
 from bus_signatures import decode_alu_flags, decode_reg_addr, decode_alu_fun, fetch_decode
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
-from amaranth_boards.de0_cv import DE0CVPlatform
+# from amaranth_boards.de0_cv import DE0CVPlatform
 
 class Decoder(wiring.Component):
     
     instr: In(fetch_decode())     # 32-bit instruction
     
-    # self.isALUreg = Signal()    # Example control signal
-    # self.isALUimm = Signal()
-    # self.isBranch = Signal()
-    # self.isJALR   = Signal()
-    # self.isJAL    = Signal()
-    # self.isAUIPC  = Signal()
-    # self.isLUI    = Signal()
-    # self.isLoad   = Signal()
-    # self.isStore  = Signal()
+
     alu_flags: Out(decode_alu_flags())
 
     isSystem = Signal()
 
-    # self.rs1_addr = Signal(5)
-    # self.rs2_addr = Signal(5)
-    # self.rd_addr = Signal(5)
+
     reg_addr: Out(decode_reg_addr())
 
-    # func3 = Signal(3)
-    # func7 = Signal(7)
+
     functions: Out(decode_alu_fun())
 
     def elaborate(self, platform):
@@ -63,10 +52,10 @@ class Decoder(wiring.Component):
         
         return m
     
-if __name__ == "__main__":
-    platform = DE0CVPlatform()
+# if __name__ == "__main__":
+#     platform = DE0CVPlatform()
 
-    core = Decoder()
-    platform.build(core, do_build=True, do_program=False)
+#     core = Decoder()
+#     platform.build(core, do_build=True, do_program=False)
 
     

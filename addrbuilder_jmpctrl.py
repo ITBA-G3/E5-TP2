@@ -19,7 +19,7 @@ class addrbuilder(wiring.Component):
     rs_data: In(operand_b_regbank())    # rs_1 y rs_2 data: needed to build the address
 
 
-    addrbuilder_enable: In(1)  # Enable signal for the addrbuilder TODO: Control Signal
+    # addrbuilder_enable: In(1)  # Enable signal for the addrbuilder TODO: Control Signal
 
     isSystem = Signal()
 
@@ -28,22 +28,26 @@ class addrbuilder(wiring.Component):
         
         m.domains.sync = ClockDomain("sync")
 
-        with m.If(self.addrbuilder_enable): # TODO: Control Signal
+        # with m.If(self.addrbuilder_enable): # TODO: Control Signal
 
-            with m.If(self.instr_flags.isALUreg | self.instr_flags.isALUimm | self.instr_flags.isLUI):
-                m.d.comb += self.PC_out.eq(self.PC_in + 1)  # For these instr PC needs no special treatment    
+        with m.If(self.instr_flags.isALUreg | self.instr_flags.isALUimm | self.instr_flags.isLUI | self.instr_flags.isAUIPC):
+            m.d.comb += [
+                self.PC_out.pc.eq(self.PC_in.pc + 1)  # For these instr PC needs no special treatment    
+            ]
 
-            with m.If(self.instr_flags.isBranch):
-                m.d.comb += self.PC_out.eq(self.PC_in + self.imm_data.imm)
+        # INSTRUCCIONES DE SALTOS QUE MODIFICAN EL PC
 
-            with m.If(self.instr_flags.isJAL):
-                m.d.comb += self.PC_out.eq(self.PC_in + self.imm_data.imm)
+        with m.If(self.instr_flags.isBranch):       # Politica de siempre tomar el salto.
+            m.d.comb += [
+                self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm)        # TODO: Por ahora estoy tomando todos los branches...
+            ]
+        with m.If(self.instr_flags.isJAL):
+            m.d.comb += [
+                self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm)
+            ]
+        with m.If(self.instr_flags.isJALR):
+            m.d.comb += [
+                self.PC_out.pc.eq((self.PC_in.pc + self.rs_data.rs1_data + self.imm_data.imm) & 0xFFFFFFFE)           # rs1 + imm asegurando que el bit menos significativo es cero
+            ]
 
-            with m.If(self.instr_flags.isJALR):
-                m.d.comb += self.PC_out.eq(self.rs_data.rs1_data + self.imm_data.imm)           # TODO: CHECK NOT SURE
-            
-            with m.If(self.instr_flags.isAUIPC):
-                m.d.comb += self.PC_out.eq(self.PC_in + self.imm_data.imm)
-            
-        
-    return m
+        return m
