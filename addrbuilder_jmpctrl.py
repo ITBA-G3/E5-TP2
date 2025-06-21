@@ -1,11 +1,11 @@
 from amaranth import *
-from bus_signatures import decode_alu_flags, operand_b_regbank, alu_regbank, imm_data, addrbuilder_enable, fetch_operand_b
+from bus_signatures import decode_alu_flags, operand_b_regbank, alu_regbank, imm_data, addrbuilder_enable, fetch_operand_b, pc_update
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
 class addrbuilder(wiring.Component):
     
-    PC_out: Out(PC_in())
+    PC_out: Out(pc_update())
     
     PC_in: In(fetch_operand_b())        # ESTE ES EL PC QUE SALE DEL FETCH Y VA AL OP BUILDER
     

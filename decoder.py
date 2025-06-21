@@ -2,6 +2,7 @@ from amaranth import *
 from bus_signatures import decode_alu_flags, decode_reg_addr, decode_alu_fun, fetch_decode
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
+from amaranth_boards.de0_cv import DE0CVPlatform
 
 class Decoder(wiring.Component):
     
@@ -59,14 +60,13 @@ class Decoder(wiring.Component):
             self.functions.func3.eq(self.instr.instr[12:15]),
             self.functions.func7.eq(self.instr.instr[25:32]),
         ]
-
-        # # Immediate values (sign-extended)
-        # m.d.comb += [
-        #     self.imm_data.Iimm.eq(Cat(self.instr.instr[20:32], self.instr.instr[31].replicate(20))), 
-        #     self.imm_data.Simm.eq(Cat(self.instr.instr[7:12], self.instr.instr[25:32], self.instr.instr[31].replicate(20))),
-        #     self.imm_data.Bimm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
-        #     self.imm_data.Uimm.eq(Cat(C(0, 12), self.instr.instr[12:32])),
-        #     self.imm_data.Jimm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
-        # ]
         
         return m
+    
+if __name__ == "__main__":
+    platform = DE0CVPlatform()
+
+    core = Decoder()
+    platform.build(core, do_build=True, do_program=False)
+
+    
