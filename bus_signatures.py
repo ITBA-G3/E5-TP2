@@ -115,3 +115,12 @@ class operand_b_mux(wiring.Signature):
     
     def __eq__(self, other):
         return self.members == other.members
+    
+class imm_data(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "imm": Out(32)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
