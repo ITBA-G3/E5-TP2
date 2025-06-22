@@ -8,7 +8,7 @@ from bus_signatures import alu_regbank, operand_b_regbank, imm_data, fetch_opera
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
-class Execute_latch(wiring.Component):
+class Retire_latch(wiring.Component):
 
     instr_flags_in : In(decode_alu_flags())
     rd_data_in : In(alu_regbank())

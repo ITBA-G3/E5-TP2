@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.
 
 
 from amaranth import *
-from bus_signatures import alu_regbank, operand_b_regbank, imm_data, fetch_operand_b, decode_alu_fun, decode_alu_flags, decode_reg_addr, fetch_decode, fetch_operand_b
+from bus_signatures import branch_flags, alu_regbank, operand_b_regbank, imm_data, fetch_operand_b, decode_alu_fun, decode_alu_flags, decode_reg_addr, fetch_decode, fetch_operand_b
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
@@ -15,6 +15,7 @@ class Execute_latch(wiring.Component):
     pc_in : In(fetch_operand_b())
     imm_data_in : In(imm_data())
     reg_data_in : In(operand_b_regbank())
+    branch_flags_in : In(branch_flags())
     rd_in : In(5) 
     enable : In(1)
     mux : In(1)
@@ -24,6 +25,7 @@ class Execute_latch(wiring.Component):
     pc_out : Out(fetch_operand_b())
     imm_data_out : Out(imm_data())
     reg_data_out : Out(operand_b_regbank())
+    branch_flags_out : Out(branch_flags())
     rd_out : Out(5)
 
     def elaborate(self, platform):
@@ -35,6 +37,7 @@ class Execute_latch(wiring.Component):
         obj_imm_data = imm_data()
         obj_operand_b_regbank = operand_b_regbank()
         obj_alu_regbank = alu_regbank()
+        obj_branch_flags = branch_flags()
         
         with m.If(self.mux):
             for (path, flow, value) in list(decode_alu_flags.flatten(obj_decode_alu_flags, self.instr_flags_in)):
@@ -69,6 +72,12 @@ class Execute_latch(wiring.Component):
 
             m.d.sync += self.rd_out.eq(0)
 
+            for (path, flow, value) in list(branch_flags.flatten(obj_branch_flags, self.branch_flags_in)):
+                dst = self.branch_flags_out
+                for key in path:
+                    dst = getattr(dst, key)
+                m.d.sync += dst.eq(0)
+
         with m.Elif(self.enable):
             for (path, flow, value) in list(decode_alu_flags.flatten(obj_decode_alu_flags, self.instr_flags_in)):
                 dst = self.instr_flags_out
@@ -102,4 +111,10 @@ class Execute_latch(wiring.Component):
 
             
             m.d.sync += self.rd_out.eq(self.rd_in)
+
+            for (path, flow, value) in list(branch_flags.flatten(obj_branch_flags, self.branch_flags_in)):
+                dst = self.branch_flags_out
+                for key in path:
+                    dst = getattr(dst, key)
+                m.d.sync += dst.eq(value)
         return m

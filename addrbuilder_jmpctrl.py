@@ -42,7 +42,7 @@ class Addrbuilder(wiring.Component):
                 ]
             with m.Elif(self.instr_flags.isJALR):
                 m.d.comb += [
-                    self.PC_out.pc.eq((self.PC_in.pc + self.rs_data.rs1_data + self.imm_data.imm) & 0xFFFFFFFE)           # rs1 + imm asegurando que el bit menos significativo es cero
+                    self.PC_out.pc.eq(self.rs_data.rs1_data + self.imm_data.imm) #& 0xFFFFFFFE)           # rs1 + imm asegurando que el bit menos significativo es cero
                 ]
 
             with m.Else():

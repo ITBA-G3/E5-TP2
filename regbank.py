@@ -2,7 +2,7 @@ from amaranth import *
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 from amaranth_boards import arty_a7
-from bus_signatures import operand_b_regbank, decode_reg_addr, alu_regbank
+from bus_signatures import decode_alu_flags, operand_b_regbank, decode_reg_addr, alu_regbank
 
 class RegBank (wiring.Component):
 
@@ -17,6 +17,7 @@ class RegBank (wiring.Component):
     # rs2_addr: In(5)
     # rd_addr: In(5)
     reg_addr: In(decode_reg_addr())
+    instr_flags : In(decode_alu_flags())
 
     we: In(1)
     
@@ -39,6 +40,8 @@ class RegBank (wiring.Component):
             m.d.sync += [
                 regBank[self.reg_addr.rd_addr].eq(self.rd_bus.rd_data),
             ]
+        
+        #TODO: Hacer la conexión con la memoria
 
         return m
 
