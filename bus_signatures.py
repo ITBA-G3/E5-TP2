@@ -130,3 +130,14 @@ class pc_update(wiring.Signature):
     
     def __eq__(self, other):
         return self.members == other.members
+
+class branch_flags(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "beq": Out(1),
+            "bne": Out(1),
+            "blt": Out(1),
+            "bge": Out(1),
+            "bltu": Out(1),
+            "bgeu": Out(1)
+        })

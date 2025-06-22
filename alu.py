@@ -19,9 +19,9 @@ class ALU(wiring.Component):
 
     flags_in: In(decode_alu_flags())
 
-    EQ: Out(1)
-    EQM: Out(1)
-    EQM_U: Out(1)
+    z_flag: Out(1)
+    n_flag: Out(1)
+    
 
     def __init__(self):
         super().__init__()
@@ -29,7 +29,10 @@ class ALU(wiring.Component):
     def elaborate(self, platform):
         m = Module()
         m.domains.sync = ClockDomain("sync")
-        m.d.comb += self.rd_bus.rd_data.eq(0)
+        # m.d.comb += self.rd_bus.rd_data.eq(0)
+        
+        m.d.comb += self.z_flag.eq(self.rd_data == 0)
+        m.d.comb += self.n_flag.eq(self.rd_data < 0)
 
         with m.If(self.flags_in.isALUreg | self.flags_in.isALUimm):
             with m.Switch(self.functions.func3):
@@ -67,5 +70,6 @@ class ALU(wiring.Component):
 
         with m.Elif(self.flags_in.isLoad | self.flags_in.isStore):
             m.d.comb += self.rd_bus.rd_data.eq(self.data_buses.A + self.data_buses.B)
-
+        with m.Elif(self.flags_in.isBranch):
+            m.d.comb += self.rd_bus.rd_data.eq(self.data_buses.A - self.data_buses.B)
         return m

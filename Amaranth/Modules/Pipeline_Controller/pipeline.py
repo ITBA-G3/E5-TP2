@@ -1,5 +1,5 @@
 from amaranth import *
-from bus_signatures import decode_alu_flags, decode_reg_addr, fetch_decode, fetch_operand_b
+from bus_signatures import branch_flags, decode_alu_flags, decode_reg_addr, fetch_decode, fetch_operand_b
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
@@ -16,6 +16,11 @@ class Pipeline(wiring.Component):
 
     instr_flags_retire : In(decode_alu_flags())
     rd_retire : In(5)
+
+    branch_flags_execute : In(branch_flags())
+
+    alu_flag_z : In(1)
+    alu_flag_n : In(1)
 
     fetch_enable : Out(1)
     fetch_mux : Out(1)
@@ -35,20 +40,44 @@ class Pipeline(wiring.Component):
 
     def elaborate(self, platform):
         m = Module()
+        with m.If(self.instr_flags_execute.isBranch):
 
-        #laputamadre qué casos tengo que considerarrrrr
-        #si más de una etapa quiere usar el mismo registro, freno?
-            #sí, siempre que sean etapas que no permitan el guardado de un registro y lo quieran usar con un valor anterior
-            #ok gracias, la puta madre
-            #Entonces acá la sección crítica es todo lo que está antes del operand builder.
-        #habría que hacer una máquina de estados para saber dónde está la instrucción de salto?
+            with m.If(self.branch_flags_execute.beq and ~self.alu_flag_z):
+                #limpiar todo porque se saltó mal
+                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += self.addr_builder_mux.eq(1)
+
+            with m.Elif(self.branch_flags_execute.bne and self.alu_flag_z):
+                #limpiar todo porque se saltó mal
+                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += self.addr_builder_mux.eq(1)
+
+            with m.Elif(self.branch_flags_execute.blt and ~self.alu_flag_n):
+                #limpiar todo porque se saltó mal
+                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += self.addr_builder_mux.eq(1)
+
+            with m.Elif(self.branch_flags_execute.bge and self.alu_flag_n):
+                #limpiar todo porque se saltó mal
+                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += self.addr_builder_mux.eq(1)
+
+            with m.Elif(self.branch_flags_execute.bltu and ~self.alu_flag_n):
+                #limpiar todo porque se saltó mal
+                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += self.addr_builder_mux.eq(1)
+
+            with m.Elif(self.branch_flags_execute.bgeu and self.alu_flag_n):
+                #limpiar todo porque se saltó mal
+                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += [self.addr_builder_mux.eq(1), self.addr_builder_enable.eq(0)]
+
         with m.If(self.instr_flags_execute.isALUreg and ((self.rd_execute == self.reg_addr_decode.rs1_addr) or (self.rd_execute == self.reg_addr_decode.rs2_addr))):
             #acá el rd de lo que se está ejecutando es igual al rs1 o rs2 de lo que se quiere ejecutar. Tengo que frenar hasta que se haya escrito
-            m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(0)]
-            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0)]
-        with m.Elif():#acá pondría el caso en el que hay que limpiar el pipeline
-            m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+            m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(0), self.addr_builder_enable.eq(0), self.execute_enable.eq(1), self.retire_enable.eq(1)]
+            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)] #mux de decode, para meter NOP a execute
         with m.Else(): #este caso es en el que ta to' normal
-            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0)]
-            m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(1), self.execute_enable.eq(1), self.retire_enable.eq(1)]
+            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
+            m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(1), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(1)]
+        
         return m
