@@ -27,16 +27,25 @@ test_instructions = [
 
 async def proc(ctx):
 
-    test_instr = test_instructions[6]  # Select the first instruction for testing
+    # for i in range(len(test_instructions)):
+        # test_instr = test_instructions[i]  # Select the first instruction for testing
 
-    ctx.set(top.decoder.instr.instr, test_instr)  # Set the instruction to be decoded
-    ctx.set(top.immbuilder.instr.instr, test_instr)  # Set the instruction for imm builder
+        #TEST WITHOUT FETCH
+        # ctx.set(top.decoder.instr.instr, test_instr)  # Set the instruction to be decoded
+        # ctx.set(top.immbuilder.instr.instr, test_instr)  # Set the instruction for imm builder
 
-    ctx.set(top.addrbuilder.PC_in.pc, 0)  # Set initial PC value
-    
+        # ctx.set(top.addrbuilder.PC_in.pc, i)  # Set initial PC value
+        
+        #TEST WITH FETCH
+    # if i==0:
+    ctx.set(top.fetch.resetn, 1)  # Reset the fetch module
+    await ctx.tick()  # Initial tick to process the reset
+    # else:
+    ctx.set(top.fetch.resetn, 0)
+
     # ctx.set(top.addrbuilder.rs_data.rs1_data, 5)  # Set rs1 data FOR JALR INSTRUCTION
     
-    await ctx.tick().repeat(2)  # Initial tick to process the inputs
+    # await ctx.tick().repeat(2)  # Initial tick to process the inputs
     print("Instr :", hex(ctx.get(top.decoder.instr.instr)))
     print("PC In :", hex(ctx.get(top.addrbuilder.PC_in.pc)))
     print("PC Out:", ctx.get(top.addrbuilder.PC_out.pc))
@@ -52,7 +61,7 @@ async def proc(ctx):
 
     print("Imm Data :", ctx.get(top.addrbuilder.imm_data.imm))
 
-    await ctx.tick()  # Initial tick to process the inputs
+    await ctx.tick().repeat(7)  # Initial tick to process the inputs
 
 
 sim.add_testbench(proc)

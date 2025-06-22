@@ -28,24 +28,24 @@ class Addrbuilder(wiring.Component):
 
         # with m.If(self.addrbuilder_enable): # TODO: Control Signal
 
-        with m.If(self.instr_flags.isALUreg | self.instr_flags.isALUimm | self.instr_flags.isLUI | self.instr_flags.isAUIPC | self.instr_flags.isStore | self.instr_flags.isLoad):
-            m.d.comb += [
-                self.PC_out.pc.eq(self.PC_in.pc + 1)  # For these instr PC needs no special treatment    
-            ]
-
         # INSTRUCCIONES DE SALTOS QUE MODIFICAN EL PC
 
         with m.If(self.instr_flags.isBranch):       # Politica de siempre tomar el salto.
             m.d.comb += [
                 self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm)        # TODO: Por ahora estoy tomando todos los branches...
             ]
-        with m.If(self.instr_flags.isJAL):
+        with m.Elif(self.instr_flags.isJAL):
             m.d.comb += [
                 self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm)
             ]
-        with m.If(self.instr_flags.isJALR):
+        with m.Elif(self.instr_flags.isJALR):
             m.d.comb += [
                 self.PC_out.pc.eq((self.PC_in.pc + self.rs_data.rs1_data + self.imm_data.imm) & 0xFFFFFFFE)           # rs1 + imm asegurando que el bit menos significativo es cero
+            ]
+
+        with m.Else():
+            m.d.comb += [
+                self.PC_out.pc.eq(self.PC_in.pc + 1)  # Default case, increment PC by 1
             ]
 
         return m

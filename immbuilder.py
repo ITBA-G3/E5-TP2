@@ -17,7 +17,7 @@ class Immbuilder(wiring.Component):
     def elaborate(self, platform):
         m = Module()
         
-        m.domains.sync = ClockDomain("sync")
+        # m.domains.sync = ClockDomain("sync")
 
 
         with m.If(self.instr_flags.isALUimm | self.instr_flags.isJALR | self.instr_flags.isLoad):  # Iimm          # ALU with immediates, JALR, Load --> imm
