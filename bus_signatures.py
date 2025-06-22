@@ -67,14 +67,10 @@ class decode_alu_fun(wiring.Signature):
     def __eq__(self, other):
         return self.members == other.members
     
-class decode_imm(wiring.Signature):
+class imm_data(wiring.Signature):
     def __init__(self):
         super().__init__({
-            "Iimm": Out(32),
-            "Uimm": Out(32),
-            "Simm": Out(32),
-            "Bimm": Out(32),
-            "Jimm": Out(32)
+            "imm": Out(32)
         })
     
     def __eq__(self, other):
@@ -116,10 +112,20 @@ class operand_b_mux(wiring.Signature):
     def __eq__(self, other):
         return self.members == other.members
     
-class imm_data(wiring.Signature):
+
+class addrbuilder_enable(wiring.Signature):
     def __init__(self):
         super().__init__({
-            "imm": Out(32)
+            "enable": In(1)  # Enable signal for the addrbuilder
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+    
+class pc_update(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "pc": Out(32)
         })
     
     def __eq__(self, other):

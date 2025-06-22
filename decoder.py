@@ -1,45 +1,24 @@
 from amaranth import *
-from bus_signatures import decode_alu_flags, decode_reg_addr, decode_alu_fun, decode_imm, fetch_decode
+from bus_signatures import decode_alu_flags, decode_reg_addr, decode_alu_fun, fetch_decode
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
+# from amaranth_boards.de0_cv import DE0CVPlatform
 
 class Decoder(wiring.Component):
     
     instr: In(fetch_decode())     # 32-bit instruction
     
-    # self.isALUreg = Signal()    # Example control signal
-    # self.isALUimm = Signal()
-    # self.isBranch = Signal()
-    # self.isJALR   = Signal()
-    # self.isJAL    = Signal()
-    # self.isAUIPC  = Signal()
-    # self.isLUI    = Signal()
-    # self.isLoad   = Signal()
-    # self.isStore  = Signal()
+
     alu_flags: Out(decode_alu_flags())
 
     isSystem = Signal()
 
-    # self.rs1_addr = Signal(5)
-    # self.rs2_addr = Signal(5)
-    # self.rd_addr = Signal(5)
+
     reg_addr: Out(decode_reg_addr())
 
-    # func3 = Signal(3)
-    # func7 = Signal(7)
+
     functions: Out(decode_alu_fun())
 
-    # Iimm = Signal(32)
-    # Uimm = Signal(32)
-    # Simm = Signal(32)
-    # Bimm = Signal(32)
-    # Jimm = Signal(32)
-    imm_data: Out(decode_imm())
-    
-    # Creo que todas estas declaraciones se tienen que hacer porque estoy simulando y quiero acceder 
-    # a estas señales desde el tb entonces tienen que ser parte de la clase "Decoder". No se si
-    # cuando hagamos el wiring tienen que estar estas señales en el constructor o no.
-    
     def elaborate(self, platform):
         m = Module()
         
@@ -70,14 +49,13 @@ class Decoder(wiring.Component):
             self.functions.func3.eq(self.instr.instr[12:15]),
             self.functions.func7.eq(self.instr.instr[25:32]),
         ]
-
-        # Immediate values (sign-extended)
-        m.d.comb += [
-            self.imm_data.Iimm.eq(Cat(self.instr.instr[20:32], self.instr.instr[31].replicate(20))), 
-            self.imm_data.Simm.eq(Cat(self.instr.instr[7:12], self.instr.instr[25:32], self.instr.instr[31].replicate(20))),
-            self.imm_data.Bimm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
-            self.imm_data.Uimm.eq(Cat(C(0, 12), self.instr.instr[12:32])),
-            self.imm_data.Jimm.eq(Cat(C(0, 1), self.instr.instr[21:31], self.instr.instr[20], self.instr.instr[12:20], self.instr.instr[31].replicate(11))),
-        ]
         
         return m
+    
+# if __name__ == "__main__":
+#     platform = DE0CVPlatform()
+
+#     core = Decoder()
+#     platform.build(core, do_build=True, do_program=False)
+
+    
