@@ -74,13 +74,18 @@ class Top (Elaboratable):
         connect(m, decode_latch.imm_data_out, execute_latch.imm_data_in)
         connect(m, decode_latch.imm_data_out, addr_builder.imm_data) 
         connect(m, decode_latch.alu_func_out, execute_latch.alu_func_in)
-        connect(m, decode_latch.reg_address_out.rs1_addr, regbank.reg_addr.rs1_addr)
-        connect(m, decode_latch.reg_address_out.rs2_addr, regbank.reg_addr.rs2_addr)
+        # connect(m, decode_latch.reg_address_out.rs1_addr, regbank.reg_addr.rs1_addr)
+        m.d.comb += [
+            decode_latch.reg_address_out.rs1_addr.eq(regbank.reg_addr.rs1_addr),
+            decode_latch.reg_address_out.rs2_addr.eq(regbank.reg_addr.rs2_addr),
+            decode_latch.reg_address_out.rd_addr.eq(execute_latch.rd_in)
+        ]
+        # connect(m, decode_latch.reg_address_out.rs2_addr, regbank.reg_addr.rs2_addr)
         connect(m, decode_latch.reg_address_out, pipeline.reg_addr_decode)
         connect(m, decode_latch.pc_out, execute_latch.pc_in)
         connect(m, decode_latch.pc_out, addr_builder.PC_in)
         connect(m, decode_latch.branch_flags_out, execute_latch.branch_flags_in)
-        connect(m, decode_latch.reg_address_out.rd_addr, execute_latch.rd_in)
+        # connect(m, decode_latch.reg_address_out.rd_addr, execute_latch.rd_in)
 
         # regbank outputs
         connect(m, regbank.rs_buses, execute_latch.reg_data_in)
@@ -94,9 +99,13 @@ class Top (Elaboratable):
         connect(m, execute_latch.instr_flags_out , opbuilder.instr_flags)
         connect(m, execute_latch.instr_flags_out, alu.flags_in)
         connect(m, execute_latch.instr_flags_out, pipeline.instr_flags_execute)
-        connect(m, execute_latch.rd_out, pipeline.rd_execute)
+        # connect(m, execute_latch.rd_out, pipeline.rd_execute)
+        m.d.comb += [
+            execute_latch.rd_out.eq(pipeline.rd_execute),
+            execute_latch.rd_out.eq(retire_latch.rd_in)
+            ]
         connect(m, execute_latch.branch_flags_out, pipeline.branch_flags_execute)
-        connect(m, execute_latch.rd_out, retire_latch.rd_in)
+        # connect(m, execute_latch.rd_out, retire_latch.rd_in)
         connect(m, execute_latch.instr_flags_out, retire_latch.instr_flags_in)
         
         # Op Builder outputs
@@ -107,21 +116,36 @@ class Top (Elaboratable):
 
         # Retire_Latch outputs
         connect(m, retire_latch.rd_data_out, regbank.rd_bus)
-        connect(m, retire_latch.rd_out, regbank.reg_addr.rd_addr)
-        connect(m, retire_latch.rd_out, pipeline.rd_retire)
+        # connect(m, retire_latch.rd_out, regbank.reg_addr.rd_addr)
+        m.d.comb += [
+            retire_latch.rd_out.eq(regbank.reg_addr.rd_addr),
+            retire_latch.rd_out.eq(pipeline.rd_retire)
+            ]
+        # connect(m, retire_latch.rd_out, pipeline.rd_retire)
         connect(m, retire_latch.instr_flags_out, regbank.instr_flags)
         connect(m, retire_latch.instr_flags_out, pipeline.instr_flags_retire)
 
         # Conexión de señales de control de latches
-        connect(m, pipeline.decode_enable, decode_latch.decode_enable)
-        connect(m, pipeline.decode_mux, decode_latch.decode_mux)
-        connect(m, pipeline.execute_enable, execute_latch.enable)
-        connect(m, pipeline.execute_mux, execute_latch.mux)
-        connect(m, pipeline.retire_enable, retire_latch.enable)
-        connect(m, pipeline.retire_mux, retire_latch.mux)
-        connect(m, pipeline.addr_builder_enable, addr_builder.addrbuilder_enable)
-        connect(m, pipeline.addr_builder_mux, addr_builder.mux)
-        connect(m, pipeline.fetch_enable, fetch.resetn)
+        # connect(m, pipeline.decode_enable, decode_latch.decode_enable)
+        # connect(m, pipeline.decode_mux, decode_latch.decode_mux)
+        # connect(m, pipeline.execute_enable, execute_latch.enable)
+        # connect(m, pipeline.execute_mux, execute_latch.mux)
+        # connect(m, pipeline.retire_enable, retire_latch.enable)
+        # connect(m, pipeline.retire_mux, retire_latch.mux)
+        # connect(m, pipeline.addr_builder_enable, addr_builder.addrbuilder_enable)
+        # connect(m, pipeline.addr_builder_mux, addr_builder.mux)
+        # connect(m, pipeline.fetch_enable, fetch.resetn)
+        m.d.comb += [
+            pipeline.decode_enable.eq(decode_latch.decode_enable),
+            pipeline.decode_mux.eq(decode_latch.decode_mux),
+            pipeline.execute_enable.eq(execute_latch.enable),
+            pipeline.execute_mux.eq(execute_latch.mux),
+            pipeline.retire_enable.eq(retire_latch.enable),
+            pipeline.retire_mux.eq(retire_latch.mux),
+            pipeline.addr_builder_enable.eq(addr_builder.addrbuilder_enable),
+            pipeline.addr_builder_mux.eq(addr_builder.mux),
+            pipeline.fetch_enable.eq(fetch.resetn)
+        ]
 
         # connect(m, regbank.rs_buses, addr_builder.rs_data)
         

@@ -31,8 +31,8 @@ class ALU(wiring.Component):
         m.domains.sync = ClockDomain("sync")
         # m.d.comb += self.rd_bus.rd_data.eq(0)
         
-        m.d.comb += self.z_flag.eq(self.rd_data == 0)
-        m.d.comb += self.n_flag.eq(self.rd_data < 0)
+        m.d.comb += self.z_flag.eq(self.rd_bus.rd_data == 0)
+        m.d.comb += self.n_flag.eq(self.rd_bus.rd_data < 0)
 
         with m.If(self.flags_in.isALUreg | self.flags_in.isALUimm):
             with m.Switch(self.functions.func3):

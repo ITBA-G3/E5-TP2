@@ -1,7 +1,7 @@
 from amaranth import *
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
-from bus_signatures import decode_alu_flags, imm_data, fetch_operand_b, operand_b_alu, operand_b_regbank, decode_imm, operand_b_mux
+from bus_signatures import decode_alu_flags, imm_data, fetch_operand_b, operand_b_alu, operand_b_regbank, operand_b_mux
 from amaranth_boards import arty_a7
 
 class opBuilder(wiring.Component):
@@ -17,7 +17,7 @@ class opBuilder(wiring.Component):
     def elaborate(self, platform):
         m = Module()  
         
-        with m.If(self.instr_flags.isALUReg):
+        with m.If(self.instr_flags.isALUreg):
             m.d.comb += self.alu_buses.A.eq(self.data_regbank.rs1_data)
             m.d.comb += self.alu_buses.B.eq(self.data_regbank.rs2_data)
         with m.Elif(self.instr_flags.isAUIPC):

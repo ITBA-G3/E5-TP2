@@ -33,8 +33,8 @@ class Retire_latch(wiring.Component):
                     dst = getattr(dst, key)
                 m.d.sync += dst.eq(0)
 
-            for (path, flow, value) in list(alu_regbank.flatten(obj_operand_b_regbank, self.rd_in)):
-                dst = self.rd_out
+            for (path, flow, value) in list(alu_regbank.flatten(obj_alu_regbank, self.rd_data_in)):
+                dst = self.rd_data_out
                 for key in path:
                     dst = getattr(dst, key)
                 m.d.sync += dst.eq(0)
@@ -48,8 +48,8 @@ class Retire_latch(wiring.Component):
                     dst = getattr(dst, key)
                 m.d.sync += dst.eq(value)
 
-            for (path, flow, value) in list(alu_regbank.flatten(obj_alu_regbank, self.rd_in)):
-                dst = self.rd_out
+            for (path, flow, value) in list(alu_regbank.flatten(obj_alu_regbank, self.rd_data_in)):
+                dst = self.rd_data_out
                 for key in path:
                     dst = getattr(dst, key)
                 m.d.sync += dst.eq(value)
