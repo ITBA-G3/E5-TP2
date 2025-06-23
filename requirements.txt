@@ -1,0 +1,8 @@
+# CHECK DONT KNOW IF OK BUT BETTER THAN NOTHING
+
+amaranth
+yosys-yowasp
+
+
+git+https://github.com/amaranth-lang/amaranth-boards.git
+

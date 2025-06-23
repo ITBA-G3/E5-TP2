@@ -54,7 +54,7 @@ class Top (Elaboratable):
         connect(m, fetch.pc, decode_latch.pc_in)
         connect(m, fetch.instr, decoder.instr)
         connect(m, fetch.instr, imm_builder.instr)
-        
+
         # Imm builder outputs
         connect(m, imm_builder.imm_data, decode_latch.imm_data_in)
         
@@ -75,6 +75,7 @@ class Top (Elaboratable):
         connect(m, decode_latch.imm_data_out, addr_builder.imm_data) 
         connect(m, decode_latch.alu_func_out, execute_latch.alu_func_in)
         # connect(m, decode_latch.reg_address_out.rs1_addr, regbank.reg_addr.rs1_addr)
+
         m.d.comb += [
             regbank.reg_addr.rs1_addr.eq(decode_latch.reg_address_out.rs1_addr),
             regbank.reg_addr.rs2_addr.eq(decode_latch.reg_address_out.rs2_addr),
@@ -83,7 +84,7 @@ class Top (Elaboratable):
         # connect(m, decode_latch.reg_address_out.rs2_addr, regbank.reg_addr.rs2_addr)
         connect(m, decode_latch.reg_address_out, pipeline.reg_addr_decode)
         connect(m, decode_latch.pc_out, execute_latch.pc_in)
-        connect(m, decode_latch.pc_out, addr_builder.PC_in)
+        connect(m, decode_latch.pc_out, addr_builder.PC_in)   
         connect(m, decode_latch.branch_flags_out, execute_latch.branch_flags_in)
         # connect(m, decode_latch.reg_address_out.rd_addr, execute_latch.rd_in)
 

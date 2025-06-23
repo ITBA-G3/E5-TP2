@@ -31,7 +31,7 @@ class Fetch(wiring.Component):
         m.submodules.rdport = rdport
 
         with m.If(~self.resetn):
-            m.d.sync += [
+            m.d.comb += [           # ANTES ERA SYNC
                 self.pc.pc.eq(self.pc_update.pc),        
                 self.instr.instr.eq(rdport.data)
             ]
