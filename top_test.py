@@ -6,14 +6,14 @@ top = Top()
 
 async def proc(ctx):
     
-    ctx.set(top.fetch.resetn, 1)  # Reset the fetch module
+    # ctx.set(top.fetch.resetn, 1)  # Reset the fetch module
     await ctx.tick()  # Initial tick to process the reset
-    ctx.set(top.fetch.resetn, 0)
+    # ctx.set(top.fetch.resetn, 0)
 
-    ctx.set(top.fetch.resetn, 0)
+    # ctx.set(top.fetch.resetn, 0)
 
-    ctx.set(top.opbuilder.muxes.muxA, 0)    # A = rs1
-    ctx.set(top.opbuilder.muxes.muxB, 0)    # B = rs2
+    # ctx.set(top.opbuilder.muxes.muxA, 0)    # A = rs1
+    # ctx.set(top.opbuilder.muxes.muxB, 0)    # B = rs2
     # ctx.set(top.pipeline.fetch_enable,1)
     # ctx.set(top.pipeline.decode_enable,1)
     # ctx.set(top.pipeline.retire_enable,1)
@@ -67,4 +67,4 @@ sim.add_clock(1e-6)
 sim.add_testbench(proc)
 
 with sim.write_vcd('top_test.vcd'):
-    sim.run_until(10 * 1e-6)  # Run for 20 ms
+    sim.run_until(20 * 1e-6)  # Run for 20 ms
