@@ -53,4 +53,11 @@ class Addrbuilder(wiring.Component):
         with m.Elif(self.mux):
             m.d.comb += self.PC_out.pc.eq(self.saved_pc)
 
+        with m.Else():
+            m.d.comb += self.PC_out.pc.eq(self.PC_in.pc)
+
+
+        # with m.If(~ self.addrbuilder_enable):
+        #     m.d.comb += self.PC_out.pc.eq(self.PC_in.pc)
+
         return m
