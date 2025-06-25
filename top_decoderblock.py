@@ -1,7 +1,7 @@
 from amaranth import *
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out, connect
-from amaranth_boards import arty_a7
+from amaranth_boards.arty_a7 import ArtyA7_100Platform
 
 from decoder import Decoder
 from immbuilder import Immbuilder
@@ -43,3 +43,8 @@ class TopDecoderBlock (Elaboratable):
         connect(m, fetch.instr, immbuilder.instr)
 
         return m
+
+if __name__ == "__main__":
+    core = TopDecoderBlock()
+    platform = ArtyA7_100Platform()
+    platform.build(core, do_build=True, do_program=False)
