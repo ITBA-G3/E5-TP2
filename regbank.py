@@ -37,7 +37,7 @@ class RegBank (wiring.Component):
 
         # the writing process is clk-syncronous, so we can use the sync domain
         with m.If((self.we) & (self.reg_addr.rd_addr != 0)):
-            m.d.sync += [
+            m.d.comb += [
                 regBank[self.reg_addr.rd_addr].eq(self.rd_bus.rd_data),
             ]
         
