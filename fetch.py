@@ -19,8 +19,13 @@ class Fetch(wiring.Component):
         program = [
             0b0000000_00000_00001_000_00000_0000000,    # nop
             0x3e800093,    # addi x1, x0, 1000
-            0x7d008113,    # addi x2, x1, 2000
-            # 0xb1e10193,    # addi x3, x2, -1250
+            0x3e800093,    # addi x1, x0, 1000
+            # 0x3e800093,    # addi x1, x0, 1000
+            # 0x7d008113,    # addi x2, x1, 2000
+            # 0xc1810113,    # addi x2, x2, -1000
+            0xfe208ee3,    # beq  x1, x2, -4
+            # 0x00208263,       # beq  x1, x2, 4
+            0xfe101fe3     # bne x0, x1, -2
             # 0x00518113,    # addi x2, x3, 5
 
         ]

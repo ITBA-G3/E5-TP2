@@ -27,28 +27,26 @@ class Addrbuilder(wiring.Component):
         
         m.domains.sync = ClockDomain("sync")
 
+        with m.If(self.instr_flags.isBranch):       # Politica de siempre tomar el salto.
+            m.d.comb += [
+                self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm),        # TODO: Por ahora estoy tomando todos los branches...
+                self.saved_pc.eq(self.PC_in.pc + 1)
+            ]
+        with m.Elif(self.instr_flags.isJAL):
+            m.d.comb += [
+                self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm)
+            ]
+        with m.Elif(self.instr_flags.isJALR):
+            m.d.comb += [
+                self.PC_out.pc.eq(self.rs_data.rs1_data + self.imm_data.imm) #& 0xFFFFFFFE)           # rs1 + imm asegurando que el bit menos significativo es cero
+            ]
+            
+            
         with m.If(self.addrbuilder_enable): # TODO: Control Signal
-
         # INSTRUCCIONES DE SALTOS QUE MODIFICAN EL PC
-
-            with m.If(self.instr_flags.isBranch):       # Politica de siempre tomar el salto.
-                m.d.comb += [
-                    self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm),        # TODO: Por ahora estoy tomando todos los branches...
-                    self.saved_pc.eq(self.PC_in.pc + 1)
-                ]
-            with m.Elif(self.instr_flags.isJAL):
-                m.d.comb += [
-                    self.PC_out.pc.eq(self.PC_in.pc + self.imm_data.imm)
-                ]
-            with m.Elif(self.instr_flags.isJALR):
-                m.d.comb += [
-                    self.PC_out.pc.eq(self.rs_data.rs1_data + self.imm_data.imm) #& 0xFFFFFFFE)           # rs1 + imm asegurando que el bit menos significativo es cero
-                ]
-
-            with m.Else():
-                m.d.comb += [
-                    self.PC_out.pc.eq(self.PC_in.pc + 1)  # Default case, increment PC by 1
-                ]
+            m.d.comb += [
+                self.PC_out.pc.eq(self.PC_in.pc + 1)  # Default case, increment PC by 1
+            ]
 
         with m.Elif(self.mux):
             m.d.comb += self.PC_out.pc.eq(self.saved_pc)
