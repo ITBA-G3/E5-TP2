@@ -2,7 +2,7 @@ from amaranth import *
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 from amaranth_boards import arty_a7
-from bus_signatures import decode_alu_flags, operand_b_regbank, decode_reg_addr, alu_regbank
+from bus_signatures import decode_alu_flags, operand_b_regbank, decode_reg_addr, alu_regbank, data_uart
 
 class RegBank (wiring.Component):
 
@@ -19,7 +19,7 @@ class RegBank (wiring.Component):
     reg_addr: In(decode_reg_addr())
     instr_flags : In(decode_alu_flags())
 
-    uart_reg : Out(32)
+    uart_reg : Out(data_uart())
 
     we: In(1)
     
@@ -37,7 +37,7 @@ class RegBank (wiring.Component):
             self.rs_buses.rs2_data.eq(regBank[self.reg_addr.rs2_addr])
         ]
 
-        m.d.comb += self.uart_reg.eq(regBank[31])
+        m.d.comb += self.uart_reg.data.eq(regBank[31])
 
         # the writing process is clk-syncronous, so we can use the sync domain
         with m.If((self.we) & (self.reg_addr.rd_addr != 0)):

@@ -15,7 +15,7 @@ from Amaranth.Modules.Latches.decode_latch import Decode_latch
 from Amaranth.Modules.Latches.execute_latch import Execute_latch
 from Amaranth.Modules.Latches.retire_latch import Retire_latch
 from Amaranth.Modules.Pipeline_Controller.pipeline import Pipeline
-from clockWorks import Clockworks
+# from clockWorks import Clockworks
 
 class Top (Elaboratable):
     def __init__(self):
@@ -36,6 +36,7 @@ class Top (Elaboratable):
         m.submodules.addr_builder = addr_builder = Addrbuilder()
         m.submodules.pipeline = pipeline = Pipeline()
         m.submodules.uart = uart = UART32()
+
         # m.submodules.clockworks = Clockworks = Clockworks(m, 21)
         
         self.decode_latch = decode_latch
@@ -95,7 +96,7 @@ class Top (Elaboratable):
         # regbank outputs
         connect(m, regbank.rs_buses, execute_latch.reg_data_in)
         connect(m, regbank.rs_buses, addr_builder.rs_data)
-        m.d.comb += uart.data.eq(regbank.uart_reg)
+        connect(m, regbank.uart_reg, uart.data)
         
         # Execute latch outputs 
         connect(m, execute_latch.alu_func_out , alu.functions)
@@ -143,12 +144,12 @@ class Top (Elaboratable):
             addr_builder.mux.eq(pipeline.addr_builder_mux),
             fetch.resetn.eq(pipeline.fetch_resetn),
             fetch.enable.eq(pipeline.fetch_enable),
-            regbank.we.eq(pipeline.regbank_we),
-            uart.start.eq(pipeline.uart_start)
+            regbank.we.eq(pipeline.regbank_we)
         ]
+        connect(m, pipeline.uart_start, uart.start)
 
         # UART outputs
-        m.d.comb += pipeline.uart_ready.eq(uart.ready)
+        connect(m, uart.ready, pipeline.uart_ready)
 
         return m
     

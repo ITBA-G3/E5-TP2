@@ -147,3 +147,41 @@ class branch_flags(wiring.Signature):
     
     def __eq__(self, other):
         return self.members == other.members
+
+class data_uart(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "data" : Out(32)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+
+class start_uart(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "start" : Out(1)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+
+class tx_uart(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "tx" : Out(1)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+
+class ready_uart(wiring.Signature):
+    def __init__(self):
+        super().__init__({
+            "ready" : Out(1)
+        })
+    
+    def __eq__(self, other):
+        return self.members == other.members
+            
+            

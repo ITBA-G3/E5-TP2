@@ -1,5 +1,5 @@
 from amaranth import *
-from bus_signatures import branch_flags, decode_alu_flags, decode_reg_addr, fetch_decode, fetch_operand_b
+from bus_signatures import branch_flags, decode_alu_flags, decode_reg_addr, fetch_decode, fetch_operand_b, start_uart, ready_uart
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out
 
@@ -39,8 +39,8 @@ class Pipeline(wiring.Component):
     
     regbank_we : Out(1)
 
-    uart_start : Out(1)
-    uart_ready : In(1)
+    uart_start : Out(start_uart())
+    uart_ready : In(ready_uart())
 
     def elaborate(self, platform):
         m = Module()
@@ -100,8 +100,8 @@ class Pipeline(wiring.Component):
             m.d.comb += [self.decode_mux.eq(0), self.execute_mux.eq(0), self.addr_builder_mux.eq(0)]
 
         ## UART ##
-        with m.If(self.rd_execute == 31 & self.uart_ready):
-            m.d.sync += self.uart_start.eq(1)
+        with m.If(self.rd_execute == 31 & self.uart_ready.ready):
+            m.d.sync += self.uart_start.start.eq(1)
         
 
         return m
