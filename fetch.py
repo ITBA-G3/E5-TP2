@@ -25,7 +25,7 @@ class Fetch(wiring.Component):
             # 0x3e800093,    # addi x1, x0, 1000
             # 0x3e900093,    # addi x1, x0, 1001
             # 0x3ea00093,    # addi x1, x0, 1002
-            # # -------------------------------
+            # -------------------------------
             # 0xfe208ee3,    # beq  x1, x2, -4
             # 0x3e800093,    # addi x1, x0, 1000
             # 0x3e900093,    # addi x1, x0, 1001
@@ -70,8 +70,8 @@ class Fetch(wiring.Component):
                 self.instr.instr.eq(rdport.data)
             ]
         
-        with m.Elif(~self.enable):
-            m.d.comb += [ self.pc.pc.eq(self.pc.pc)]
+        # with m.Elif(~self.enable):
+        #     m.d.comb += self.pc.pc.eq(self.pc.pc)
 
         m.d.comb += rdport.addr.eq(self.pc.pc)
 
