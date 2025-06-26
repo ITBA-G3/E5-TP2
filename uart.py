@@ -1,18 +1,20 @@
 from amaranth import *
 from amaranth.build import Platform
+from amaranth.lib import wiring
 from amaranth_boards.arty_a7 import ArtyA7_100Platform
+from amaranth.lib.wiring import In, Out
 
 class UART32(Elaboratable):
+    # inputs
+    data = Signal(32)
+    start = Signal(1)
+
+    # outputs
+    tx = Signal(1)
+    ready = Signal(1)
+
     def __init__(self):
-        
-        # inputs
-        self.data = Signal(32)
-        self.send = Signal()
-
-        # outputs
-        self.tx = Signal(reset=1)
-        self.ready = Signal()
-
+        super().__init__()
 
     def elaborate(self, platform):
         m = Module()
@@ -48,7 +50,7 @@ class UART32(Elaboratable):
         m.d.comb += self.ready.eq(~sending)
 
         # idle vs sending
-        with m.If((self.send & self.ready)):
+        with m.If((self.start & self.ready)):
             first_byte = self.data[0:8]
             m.d.sync += [
                 trama.eq(Cat(

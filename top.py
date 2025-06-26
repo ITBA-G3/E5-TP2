@@ -9,11 +9,13 @@ from decoder import Decoder
 from fetch import Fetch
 from opbuilder import opBuilder
 from immbuilder import Immbuilder
+from uart import UART32
 from addrbuilder_jmpctrl import Addrbuilder
 from Amaranth.Modules.Latches.decode_latch import Decode_latch
 from Amaranth.Modules.Latches.execute_latch import Execute_latch
 from Amaranth.Modules.Latches.retire_latch import Retire_latch
 from Amaranth.Modules.Pipeline_Controller.pipeline import Pipeline
+from clockWorks import Clockworks
 
 class Top (Elaboratable):
     def __init__(self):
@@ -33,7 +35,8 @@ class Top (Elaboratable):
         m.submodules.imm_builder = imm_builder = Immbuilder()
         m.submodules.addr_builder = addr_builder = Addrbuilder()
         m.submodules.pipeline = pipeline = Pipeline()
-        
+        m.submodules.uart = uart = UART32()
+        # m.submodules.clockworks = Clockworks = Clockworks(m, 21)
         
         self.decode_latch = decode_latch
         self.execute_latch = execute_latch
@@ -46,7 +49,8 @@ class Top (Elaboratable):
         self.imm_builder = imm_builder
         self.addr_builder = addr_builder
         self.pipeline = pipeline
-
+        self.uart = uart
+        
         # Fetch inputs
         connect(m, fetch.pc_update, addr_builder.PC_out)
 
@@ -91,6 +95,7 @@ class Top (Elaboratable):
         # regbank outputs
         connect(m, regbank.rs_buses, execute_latch.reg_data_in)
         connect(m, regbank.rs_buses, addr_builder.rs_data)
+        m.d.comb += uart.data.eq(regbank.uart_reg)
         
         # Execute latch outputs 
         connect(m, execute_latch.alu_func_out , alu.functions)
@@ -138,9 +143,11 @@ class Top (Elaboratable):
             addr_builder.mux.eq(pipeline.addr_builder_mux),
             fetch.resetn.eq(pipeline.fetch_resetn),
             fetch.enable.eq(pipeline.fetch_enable),
-            regbank.we.eq(pipeline.regbank_we)
+            regbank.we.eq(pipeline.regbank_we),
+            uart.start.eq(pipeline.uart_start)
         ]
 
-        # connect(m, regbank.rs_buses, addr_builder.rs_data)
-        
+        # UART outputs
+        m.d.comb += pipeline.uart_ready.eq(uart.ready)
+
         return m

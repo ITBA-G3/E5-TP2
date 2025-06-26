@@ -39,6 +39,8 @@ class Pipeline(wiring.Component):
     
     regbank_we : Out(1)
 
+    uart_start : Out(1)
+    uart_ready : In(1)
 
     def elaborate(self, platform):
         m = Module()
@@ -55,7 +57,7 @@ class Pipeline(wiring.Component):
                 m.d.comb += [self.regbank_we.eq(0),  self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
                 m.d.comb += [self.addr_builder_mux.eq(1), self.fetch_enable.eq(1)]
 
-            # blt: bacon lettuce tomato
+                # blt: bacon lettuce tomato
             with m.Elif(self.branch_flags_execute.blt & ~self.alu_flag_n):
                 #limpiar todo porque se saltó mal
                 m.d.comb += [self.regbank_we.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
@@ -91,11 +93,15 @@ class Pipeline(wiring.Component):
             m.d.comb += self.regbank_we.eq(1) 
             m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(0), self.execute_enable.eq(0), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
             m.d.comb += [self.decode_mux.eq(0), self.execute_mux.eq(1), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)] #mux de decode, para meter NOP a execute
-        
+
         with m.Else():   #este caso es en el que ta to' normal
             m.d.comb += self.regbank_we.eq(1) 
             m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(1), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(1)]
             m.d.comb += [self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
 
+        ## UART ##
+        with m.If(self.rd_execute == 31 & self.uart_ready):
+            m.d.sync += self.uart_start.eq(1)
         
+
         return m

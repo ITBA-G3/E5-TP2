@@ -19,12 +19,7 @@ class RegBank (wiring.Component):
     reg_addr: In(decode_reg_addr())
     instr_flags : In(decode_alu_flags())
 
-    R6 = Signal(32)
-    R7 = Signal(32)
-    R8 = Signal(32)
-    R24 = Signal(32)
-    R25 = Signal(32)
-    R26 = Signal(32)
+    uart_reg : Out(32)
 
     we: In(1)
     
@@ -41,14 +36,8 @@ class RegBank (wiring.Component):
             self.rs_buses.rs1_data.eq(regBank[self.reg_addr.rs1_addr]),
             self.rs_buses.rs2_data.eq(regBank[self.reg_addr.rs2_addr])
         ]
-        m.d.comb += [
-            self.R6.eq(regBank[6]),
-            self.R7.eq(regBank[7]),
-            self.R8.eq(regBank[8]),
-            self.R24.eq(regBank[24]),
-            self.R25.eq(regBank[25]),
-            self.R26.eq(regBank[26])
-        ]
+
+        m.d.comb += self.uart_reg.eq(regBank[31])
 
         # the writing process is clk-syncronous, so we can use the sync domain
         with m.If((self.we) & (self.reg_addr.rd_addr != 0) & self.reg_addr.rd_addr <len(regBank)):
