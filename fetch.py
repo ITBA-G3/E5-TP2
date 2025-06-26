@@ -12,6 +12,7 @@ class Fetch(wiring.Component):
     pc : Out(fetch_operand_b()) 
     resetn : In(1)
     pc_update : In(pc_update())
+    enable : In(1)
 
     def elaborate(self, platform):
         m = Module()
@@ -19,15 +20,20 @@ class Fetch(wiring.Component):
         program = [
             0b0000000_00000_00001_000_00000_0000000,    # nop
             0x3e800093,    # addi x1, x0, 1000
+            0x3e900093,    # addi x1, x0, 1001
+            0x3ea00093,    # addi x1, x0, 1002
             0x3e800093,    # addi x1, x0, 1000
-            # 0x3e800093,    # addi x1, x0, 1000
-            # 0x7d008113,    # addi x2, x1, 2000
-            # 0xc1810113,    # addi x2, x2, -1000
+            0x3e900093,    # addi x1, x0, 1001
+            0x3ea00093,    # addi x1, x0, 1002
+            # -------------------------------
             0xfe208ee3,    # beq  x1, x2, -4
-            # 0x00208263,       # beq  x1, x2, 4
-            0xfe101fe3     # bne x0, x1, -2
-            # 0x00518113,    # addi x2, x3, 5
-
+            0x3e800093,    # addi x1, x0, 1000
+            0x3e900093,    # addi x1, x0, 1001
+            0x3ea00093,    # addi x1, x0, 1002
+            0xfe101de3,     # bne x0, x1, -6
+            0x3ea00093,    # addi x1, x0, 1002
+            0x3e900093,    # addi x1, x0, 1001
+            0x3e800093    # addi x1, x0, 1000
         ]
 
         # 256-word 32-bit wide instr mem
@@ -39,11 +45,14 @@ class Fetch(wiring.Component):
         rdport = mem.read_port()
         m.submodules.rdport = rdport
 
-        with m.If(~self.resetn):
-            m.d.comb += [           # ANTES ERA SYNC
+        with m.If(~self.resetn & self.enable):
+            m.d.comb += [
                 self.pc.pc.eq(self.pc_update.pc),        
                 self.instr.instr.eq(rdport.data)
             ]
+        
+        with m.Elif(~self.enable):
+            m.d.comb += [ self.pc.pc.eq(self.pc.pc)]
 
         m.d.comb += rdport.addr.eq(self.pc.pc)
 

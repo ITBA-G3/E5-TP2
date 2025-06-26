@@ -59,7 +59,7 @@ class Decode_latch(wiring.Component):
                 dst = self.pc_out
                 for key in path:
                     dst = getattr(dst, key)
-                m.d.sync += dst.eq(0)
+                m.d.sync += dst.eq(value)
             
             for (path, flow, value) in list(imm_data.flatten(obj_imm_data, self.imm_data_in)):
                 dst = self.imm_data_out

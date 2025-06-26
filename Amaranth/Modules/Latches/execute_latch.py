@@ -109,7 +109,6 @@ class Execute_latch(wiring.Component):
                     dst = getattr(dst, key)
                 m.d.sync += dst.eq(value)
 
-            
             m.d.sync += self.rd_out.eq(self.rd_in)
 
             for (path, flow, value) in list(branch_flags.flatten(obj_branch_flags, self.branch_flags_in)):

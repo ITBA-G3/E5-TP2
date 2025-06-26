@@ -132,7 +132,9 @@ class Top (Elaboratable):
             retire_latch.mux.eq(pipeline.retire_mux),
             addr_builder.addrbuilder_enable.eq(pipeline.addr_builder_enable),
             addr_builder.mux.eq(pipeline.addr_builder_mux),
-            fetch.resetn.eq(pipeline.fetch_enable)
+            fetch.resetn.eq(pipeline.fetch_resetn),
+            fetch.enable.eq(pipeline.fetch_enable),
+            regbank.we.eq(pipeline.regbank_we)
         ]
 
         # connect(m, regbank.rs_buses, addr_builder.rs_data)

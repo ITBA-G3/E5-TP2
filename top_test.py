@@ -21,7 +21,7 @@ async def proc(ctx):
     # ctx.set(top.pipeline.addr_builder_enable,1)
     
     
-    ctx.set(top.regbank.we, 1)
+    # ctx.set(top.regbank.we, 1)
     
     await ctx.tick().repeat(2)
     # print("-------JAL--------------")
@@ -38,7 +38,8 @@ async def proc(ctx):
     # print("------------------------")
     # print(f"rd_addr: {ctx.get(top.regbank.reg_addr.rd_addr)}")
     # print(f"rd_data: {ctx.get(top.regbank.rd_bus.rd_data)}")
-    ctx.set(top.opbuilder.muxes.muxB, 0b001)    # B = rs2    
+    
+    # ctx.set(top.opbuilder.muxes.muxB, 0b001)    # B = rs2    
 
     await ctx.tick() # ADDI
     # print("-------ADDI: I = 7------")
@@ -67,4 +68,4 @@ sim.add_clock(1e-6)
 sim.add_testbench(proc)
 
 with sim.write_vcd('top_test.vcd'):
-    sim.run_until(20 * 1e-6)  # Run for 20 ms
+    sim.run_until(50 * 1e-6)  # Run for 20 ms

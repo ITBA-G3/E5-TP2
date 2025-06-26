@@ -23,7 +23,7 @@ class Pipeline(wiring.Component):
     alu_flag_n : In(1)
 
     fetch_enable : Out(1)
-    fetch_mux : Out(1)
+    fetch_resetn : Out(1)
 
     decode_enable : Out(1)
     decode_mux : Out(1)
@@ -36,60 +36,62 @@ class Pipeline(wiring.Component):
 
     addr_builder_mux: Out(1)
     addr_builder_enable : Out(1)
+    
+    regbank_we : Out(1)
 
 
     def elaborate(self, platform):
         m = Module()
         # m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(1), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(1)]
-
+        m.d.comb += self.fetch_resetn.eq(0)
         with m.If(self.instr_flags_execute.isBranch):
-
             with m.If(self.branch_flags_execute.beq & ~self.alu_flag_z):
                 #limpiar todo porque se saltó mal
-                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
-                m.d.comb += self.addr_builder_mux.eq(1)
+                m.d.comb += [self.regbank_we.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += [self.addr_builder_mux.eq(1), self.fetch_enable.eq(1)]
 
             with m.Elif(self.branch_flags_execute.bne & self.alu_flag_z):
                 #limpiar todo porque se saltó mal
-                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
-                m.d.comb += self.addr_builder_mux.eq(1)
+                m.d.comb += [self.regbank_we.eq(0),  self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += [self.addr_builder_mux.eq(1), self.fetch_enable.eq(1)]
 
+            # blt: bacon lettuce tomato
             with m.Elif(self.branch_flags_execute.blt & ~self.alu_flag_n):
                 #limpiar todo porque se saltó mal
-                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
-                m.d.comb += self.addr_builder_mux.eq(1)
+                m.d.comb += [self.regbank_we.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += [self.addr_builder_mux.eq(1), self.fetch_enable.eq(1)]
 
             with m.Elif(self.branch_flags_execute.bge & self.alu_flag_n):
                 #limpiar todo porque se saltó mal
-                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
-                m.d.comb += self.addr_builder_mux.eq(1)
+                m.d.comb += [self.regbank_we.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += [self.addr_builder_mux.eq(1), self.fetch_enable.eq(1)]
 
             with m.Elif(self.branch_flags_execute.bltu & ~self.alu_flag_n):
                 #limpiar todo porque se saltó mal
-                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
-                m.d.comb += self.addr_builder_mux.eq(1)
+                m.d.comb += [self.regbank_we.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += [self.addr_builder_mux.eq(1), self.fetch_enable.eq(1)]
 
             with m.Elif(self.branch_flags_execute.bgeu & self.alu_flag_n):
                 #limpiar todo porque se saltó mal
-                m.d.comb += [self.fetch_mux.eq(1), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
+                m.d.comb += [self.regbank_we.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(1), self.retire_mux.eq(1)]
                 m.d.comb += self.addr_builder_mux.eq(1)
-                m.d.comb += self.addr_builder_enable.eq(0)
+                m.d.comb += [self.addr_builder_enable.eq(0), self.fetch_enable.eq(1)]
+                
+        with m.Elif(self.instr_flags_decode.isBranch):
+            m.d.comb += self.regbank_we.eq(1) 
+            m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(0), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
+            m.d.comb += [self.decode_mux.eq(1), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
 
-        with m.Elif((self.instr_flags_decode.isALUreg | self.instr_flags_decode.isALUimm) & (self.instr_flags_execute.isALUreg | self.instr_flags_execute.isALUimm)):
-            
-            with m.If((self.reg_addr_decode.rs1_addr != 0) & (self.rd_execute != 0) &
-                    ((self.rd_execute == self.reg_addr_decode.rs1_addr) | 
-                     (self.rd_execute == self.reg_addr_decode.rs2_addr))):
+        with m.Elif(((self.instr_flags_decode.isALUreg | self.instr_flags_decode.isALUimm) & (self.instr_flags_execute.isALUreg | self.instr_flags_execute.isALUimm)) & ((self.reg_addr_decode.rs1_addr != 0) & (self.rd_execute != 0) & ((self.rd_execute == self.reg_addr_decode.rs1_addr) | (self.rd_execute == self.reg_addr_decode.rs2_addr)))):
             #acá el rd de lo que se está ejecut&o es igual al rs1 o rs2 de lo que se quiere ejecutar. Tengo que frenar hasta que se haya escrito
-                m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(0), self.execute_enable.eq(0), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
-                m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(1), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)] #mux de decode, para meter NOP a execute
-
+            m.d.comb += self.regbank_we.eq(1) 
+            m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(0), self.execute_enable.eq(0), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
+            m.d.comb += [self.decode_mux.eq(0), self.execute_mux.eq(1), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)] #mux de decode, para meter NOP a execute
+        
         with m.Else():   #este caso es en el que ta to' normal
-            m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(1), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(1)]
-            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
+            m.d.comb += self.regbank_we.eq(1) 
+            m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(1), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(1)]
+            m.d.comb += [self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
 
-        with m.If(self.instr_flags_decode.isBranch):
-            m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(0), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
-            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
         
         return m

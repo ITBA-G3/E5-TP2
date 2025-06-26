@@ -27,7 +27,7 @@ class Decoder(wiring.Component):
 
         # Decode instruction from opcode bits ([0:7] 6 bits menos significativos)
         opcode = self.instr.instr[0:7]
-        branch = self.instr.instr[13:16]
+        branch = self.instr.instr[12:15]
         
         m.d.comb += [
             self.alu_flags.isALUreg.eq(opcode == 0b0110011),         
@@ -42,14 +42,64 @@ class Decoder(wiring.Component):
             self.isSystem.eq(opcode == 0b1110011),
         ]
         with m.If(opcode == 0b1100011):
-            m.d.comb += [
-                self.branch_flags.beq.eq(branch == 0b000),
-                self.branch_flags.bne.eq(branch == 0b001),
-                self.branch_flags.blt.eq(branch == 0b100),
-                self.branch_flags.bge.eq(branch == 0b101),
-                self.branch_flags.bltu.eq(branch == 0b110),
-                self.branch_flags.bgeu.eq(branch == 0b111)
-            ]
+            with m.Switch(branch):
+                with m.Case(0b000):
+                    m.d.comb += [
+                        self.branch_flags.beq.eq(1),
+                        self.branch_flags.bne.eq(0),
+                        self.branch_flags.blt.eq(0),
+                        self.branch_flags.bge.eq(0),
+                        self.branch_flags.bltu.eq(0),
+                        self.branch_flags.bgeu.eq(0)]
+                with m.Case(0b001):
+                    m.d.comb += [
+                        self.branch_flags.beq.eq(0),
+                        self.branch_flags.bne.eq(1),
+                        self.branch_flags.blt.eq(0),
+                        self.branch_flags.bge.eq(0),
+                        self.branch_flags.bltu.eq(0),
+                        self.branch_flags.bgeu.eq(0)]
+                with m.Case(0b100):
+                    m.d.comb += [
+                        self.branch_flags.beq.eq(0),
+                        self.branch_flags.bne.eq(0),
+                        self.branch_flags.blt.eq(1),
+                        self.branch_flags.bge.eq(0),
+                        self.branch_flags.bltu.eq(0),
+                        self.branch_flags.bgeu.eq(0)]
+                with m.Case(0b101):
+                    m.d.comb += [
+                        self.branch_flags.beq.eq(0),
+                        self.branch_flags.bne.eq(0),
+                        self.branch_flags.blt.eq(0),
+                        self.branch_flags.bge.eq(1),
+                        self.branch_flags.bltu.eq(0),
+                        self.branch_flags.bgeu.eq(0)]
+                with m.Case(0b110):
+                    m.d.comb += [
+                        self.branch_flags.beq.eq(0),
+                        self.branch_flags.bne.eq(0),
+                        self.branch_flags.blt.eq(0),
+                        self.branch_flags.bge.eq(0),
+                        self.branch_flags.bltu.eq(1),
+                        self.branch_flags.bgeu.eq(0)]
+                with m.Case(0b111):
+                    m.d.comb += [
+                        self.branch_flags.beq.eq(0),
+                        self.branch_flags.bne.eq(0),
+                        self.branch_flags.blt.eq(0),
+                        self.branch_flags.bge.eq(0),
+                        self.branch_flags.bltu.eq(0),
+                        self.branch_flags.bgeu.eq(1)]
+                with m.Default():
+                    m.d.comb += [
+                        self.branch_flags.beq.eq(0),
+                        self.branch_flags.bne.eq(0),
+                        self.branch_flags.blt.eq(0),
+                        self.branch_flags.bge.eq(0),
+                        self.branch_flags.bltu.eq(0),
+                        self.branch_flags.bgeu.eq(0)]
+            
         with m.Else():
             m.d.comb += [
                 self.branch_flags.beq.eq(0),
