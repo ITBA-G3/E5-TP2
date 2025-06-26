@@ -19,6 +19,13 @@ class RegBank (wiring.Component):
     reg_addr: In(decode_reg_addr())
     instr_flags : In(decode_alu_flags())
 
+    R6 = Signal(32)
+    R7 = Signal(32)
+    R8 = Signal(32)
+    R24 = Signal(32)
+    R25 = Signal(32)
+    R26 = Signal(32)
+
     we: In(1)
     
     def __init__(self):
@@ -27,20 +34,33 @@ class RegBank (wiring.Component):
     def elaborate (self, platform):
         m = Module()
 
-        regBank = Array([Signal(32) for x in range(32)],)
+        regBank = Array([Signal(32) for x in range(32)])
 
         # the reading process is combinational, so we can use the combinational domain
         m.d.comb += [
             self.rs_buses.rs1_data.eq(regBank[self.reg_addr.rs1_addr]),
-            self.rs_buses.rs2_data.eq(regBank[self.reg_addr.rs2_addr]),
+            self.rs_buses.rs2_data.eq(regBank[self.reg_addr.rs2_addr])
+        ]
+        m.d.comb += [
+            self.R6.eq(regBank[6]),
+            self.R7.eq(regBank[7]),
+            self.R8.eq(regBank[8]),
+            self.R24.eq(regBank[24]),
+            self.R25.eq(regBank[25]),
+            self.R26.eq(regBank[26])
         ]
 
         # the writing process is clk-syncronous, so we can use the sync domain
-        with m.If((self.we) & (self.reg_addr.rd_addr != 0)):
-            m.d.comb += [
-                regBank[self.reg_addr.rd_addr].eq(self.rd_bus.rd_data),
-            ]
-        
+        with m.If((self.we) & (self.reg_addr.rd_addr != 0) & self.reg_addr.rd_addr <len(regBank)):
+            for i in range(len(regBank)):
+                with m.If(self.reg_addr.rd_addr == i):
+                    m.d.comb += regBank[i].eq(self.rd_bus.rd_data)
+                with m.Else():
+                    m.d.comb += regBank[i].eq(regBank[i])
+
+        with m.Else():
+            for i in range(len(regBank)):
+                m.d.comb += regBank[i].eq(regBank[i])
         #TODO: Hacer la conexión con la memoria
 
         return m

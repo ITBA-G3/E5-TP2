@@ -112,6 +112,10 @@ class Top (Elaboratable):
         
         # ALU outputs
         connect(m, alu.rd_bus, retire_latch.rd_data_in)
+        m.d.comb += [
+            pipeline.alu_flag_n.eq(alu.n_flag),
+            pipeline.alu_flag_z.eq(alu.z_flag)
+        ]
 
         # Retire_Latch outputs
         connect(m, retire_latch.rd_data_out, regbank.rd_bus)

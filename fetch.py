@@ -16,24 +16,42 @@ class Fetch(wiring.Component):
 
     def elaborate(self, platform):
         m = Module()
-
+        self.n = 25
         program = [
             0b0000000_00000_00001_000_00000_0000000,    # nop
-            0x3e800093,    # addi x1, x0, 1000
-            0x3e900093,    # addi x1, x0, 1001
-            0x3ea00093,    # addi x1, x0, 1002
-            0x3e800093,    # addi x1, x0, 1000
-            0x3e900093,    # addi x1, x0, 1001
-            0x3ea00093,    # addi x1, x0, 1002
-            # -------------------------------
-            0xfe208ee3,    # beq  x1, x2, -4
-            0x3e800093,    # addi x1, x0, 1000
-            0x3e900093,    # addi x1, x0, 1001
-            0x3ea00093,    # addi x1, x0, 1002
-            0xfe101de3,     # bne x0, x1, -6
-            0x3ea00093,    # addi x1, x0, 1002
-            0x3e900093,    # addi x1, x0, 1001
-            0x3e800093    # addi x1, x0, 1000
+            # 0x3e800093,    # addi x1, x0, 1000
+            # 0x3e900093,    # addi x1, x0, 1001
+            # 0x3ea00093,    # addi x1, x0, 1002
+            # 0x3e800093,    # addi x1, x0, 1000
+            # 0x3e900093,    # addi x1, x0, 1001
+            # 0x3ea00093,    # addi x1, x0, 1002
+            # # -------------------------------
+            # 0xfe208ee3,    # beq  x1, x2, -4
+            # 0x3e800093,    # addi x1, x0, 1000
+            # 0x3e900093,    # addi x1, x0, 1001
+            # 0x3ea00093,    # addi x1, x0, 1002
+            # 0xfe101de3,     # bne x0, x1, -6
+            # 0x3ea00093,    # addi x1, x0, 1002
+            # 0x3e900093,    # addi x1, x0, 1001
+            # 0x3e800093    # addi x1, x0, 1000
+            
+            #FIBONACCI
+            0x00d00193,
+            0x00200093,
+            0x00100113,
+            0x00200213,
+            0x00200293,
+            0x0030d363,
+            0x00208233,
+            0x00008133,
+            0x000200b3,
+            0x00128293,
+            0xfe329de3,
+            0x00328163,
+            0x000103b3,
+            0x00a0006f,
+            0x000203b3,
+            0x00a0006f,
         ]
 
         # 256-word 32-bit wide instr mem

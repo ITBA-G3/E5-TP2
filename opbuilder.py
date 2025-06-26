@@ -44,5 +44,8 @@ class opBuilder(wiring.Component):
         with m.Elif(self.instr_flags.isStore):
             m.d.comb += self.alu_buses.A.eq(self.data_regbank.rs1_data)
             m.d.comb += self.alu_buses.B.eq(self.imm.imm)
+        with m.Else():
+            m.d.comb += self.alu_buses.A.eq(self.data_regbank.rs1_data)
+            m.d.comb += self.alu_buses.B.eq(self.data_regbank.rs2_data)
         
         return m

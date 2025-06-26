@@ -20,6 +20,9 @@ class Decoder(wiring.Component):
 
     functions: Out(decode_alu_fun())
 
+    RS1_ADDR = Signal(5)
+    RS2_ADDR = Signal(5)
+
     def elaborate(self, platform):
         m = Module()
         
@@ -117,8 +120,10 @@ class Decoder(wiring.Component):
             self.reg_addr.rd_addr.eq(self.instr.instr[7:12]),
 
             self.functions.func3.eq(self.instr.instr[12:15]),
-            self.functions.func7.eq(self.instr.instr[25:32]),
+            self.functions.func7.eq(self.instr.instr[25:32])
         ]
+        m.d.comb += self.RS1_ADDR.eq(self.instr.instr[15:20])
+        m.d.comb += self.RS2_ADDR.eq(self.instr.instr[20:25])
         
         return m
     
