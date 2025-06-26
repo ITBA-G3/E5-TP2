@@ -121,7 +121,7 @@ def assemble_program(lines):
 # === Ejemplo de uso ===
 if __name__ == "__main__":
     asm = [
-        "addi x3,x0,13",   #// n
+        "addi x3,x0,25",   #// n
         "addi x1,x0,2",    #//i0
         "addi x2,x0,1",    #//i1
         "addi x4,x0,2",    #//resultado
@@ -134,15 +134,20 @@ if __name__ == "__main__":
         "add x2,x1,x0",
         "add x1,x4,x0",
         "addi x5,x5,1",
-        "bne x5,x3,-5",
-        "beq x5,x3,3",     #//DEVOLVER RESULTADO
+        "beq x5,x3,4",     #//DEVOLVER RESULTADO
+        "bne x5,x3,-6",
 
         "add x7,x2,x0",    #//ACÁ DEVUELVO 1
         "jal x0,10",
+
+        "add x0,x0,x0",
 
         "add x7,x4,x0",    #//ACÁ DEVUELVO EL RESULTADO
         "jal x0,10"
     ]
 
     for i, hexcode in enumerate(assemble_program(asm)):
-        print(f"0x{hexcode},#",asm[i])
+        if i != len(asm)-1:
+            print(f"0x{hexcode},    #",asm[i], f"   {i+1}")
+        else:
+            print(f"0x{hexcode}     #",asm[i], f"   {i+1}")
