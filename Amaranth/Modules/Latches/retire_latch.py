@@ -14,7 +14,7 @@ class Retire_latch(wiring.Component):
     rd_data_in : In(alu_regbank())
     rd_in : In(5) 
     enable : In(1)
-    mux : In(1)
+    # mux : In(1)
 
     instr_flags_out : Out(decode_alu_flags())
     rd_data_out : Out(alu_regbank())

@@ -138,7 +138,7 @@ class Top (Elaboratable):
             execute_latch.enable.eq(pipeline.execute_enable),
             execute_latch.mux.eq(pipeline.execute_mux),
             retire_latch.enable.eq(pipeline.retire_enable),
-            retire_latch.mux.eq(pipeline.retire_mux),
+            # retire_latch.mux.eq(pipeline.retire_mux),
             addr_builder.addrbuilder_enable.eq(pipeline.addr_builder_enable),
             addr_builder.mux.eq(pipeline.addr_builder_mux),
             fetch.resetn.eq(pipeline.fetch_resetn),
