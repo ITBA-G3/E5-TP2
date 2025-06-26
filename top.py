@@ -1,7 +1,7 @@
 from amaranth import *
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out, connect
-from amaranth_boards import arty_a7
+from amaranth_boards.arty_a7 import ArtyA7_100Platform
 
 from regbank import RegBank
 from alu import ALU
@@ -151,3 +151,8 @@ class Top (Elaboratable):
         m.d.comb += pipeline.uart_ready.eq(uart.ready)
 
         return m
+    
+if __name__ == "__main__":
+    core = Top()
+    platform = ArtyA7_100Platform()
+    platform.build(core, do_build=True, do_program=False)
