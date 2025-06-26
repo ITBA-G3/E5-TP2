@@ -40,16 +40,16 @@ class RegBank (wiring.Component):
         m.d.comb += self.uart_reg.eq(regBank[31])
 
         # the writing process is clk-syncronous, so we can use the sync domain
-        with m.If((self.we) & (self.reg_addr.rd_addr != 0) & self.reg_addr.rd_addr <len(regBank)):
-            for i in range(len(regBank)):
-                with m.If(self.reg_addr.rd_addr == i):
-                    m.d.comb += regBank[i].eq(self.rd_bus.rd_data)
-                with m.Else():
-                    m.d.comb += regBank[i].eq(regBank[i])
+        with m.If((self.we) & (self.reg_addr.rd_addr != 0)):
+            
+            # with m.If(self.reg_addr.rd_addr == i):
+            m.d.sync += regBank[self.reg_addr.rd_addr].eq(self.rd_bus.rd_data)
+                # with m.Else():
+                #     m.d.comb += regBank[i].eq(regBank[i])
 
-        with m.Else():
-            for i in range(len(regBank)):
-                m.d.comb += regBank[i].eq(regBank[i])
+        # with m.Else():
+        #     for i in range(len(regBank)):
+        #         m.d.comb += regBank[i].eq(regBank[i])
         #TODO: Hacer la conexión con la memoria
 
         return m

@@ -26,33 +26,34 @@ class Retire_latch(wiring.Component):
         obj_decode_alu_flags = decode_alu_flags()
         obj_alu_regbank = alu_regbank()
         
-        with m.If(self.mux):
-            for (path, flow, value) in list(decode_alu_flags.flatten(obj_decode_alu_flags, self.instr_flags_in)):
-                dst = self.instr_flags_out
-                for key in path:
-                    dst = getattr(dst, key)
-                m.d.sync += dst.eq(0)
+        # with m.If(self.mux):
+        #     for (path, flow, value) in list(decode_alu_flags.flatten(obj_decode_alu_flags, self.instr_flags_in)):
+        #         dst = self.instr_flags_out
+        #         for key in path:
+        #             dst = getattr(dst, key)
+        #         m.d.sync += dst.eq(0)
 
-            for (path, flow, value) in list(alu_regbank.flatten(obj_alu_regbank, self.rd_data_in)):
-                dst = self.rd_data_out
-                for key in path:
-                    dst = getattr(dst, key)
-                m.d.sync += dst.eq(0)
+        #     for (path, flow, value) in list(alu_regbank.flatten(obj_alu_regbank, self.rd_data_in)):
+        #         dst = self.rd_data_out
+        #         for key in path:
+        #             dst = getattr(dst, key)
+        #         m.d.sync += dst.eq(0)
             
-            m.d.sync += self.rd_out.eq(0)
+        #     m.d.sync += self.rd_out.eq(0)
 
-        with m.Elif(self.enable):
+        with m.If(self.enable):
             for (path, flow, value) in list(decode_alu_flags.flatten(obj_decode_alu_flags, self.instr_flags_in)):
                 dst = self.instr_flags_out
                 for key in path:
                     dst = getattr(dst, key)
-                m.d.sync += dst.eq(value)
+                m.d.comb += dst.eq(value)
 
             for (path, flow, value) in list(alu_regbank.flatten(obj_alu_regbank, self.rd_data_in)):
                 dst = self.rd_data_out
                 for key in path:
                     dst = getattr(dst, key)
-                m.d.sync += dst.eq(value)
+                m.d.comb += dst.eq(value)
 
-            m.d.sync += self.rd_out.eq(self.rd_in)
+            m.d.comb += self.rd_out.eq(self.rd_in)
+        
         return m
