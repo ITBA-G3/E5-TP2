@@ -32,7 +32,7 @@ class Immbuilder(wiring.Component):
 
         with m.If(self.instr_flags.isBranch):             # Conditional Branch instructions --> Bimm
             m.d.comb += [
-                self.imm_data.imm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(19))),
+                self.imm_data.imm.eq(Cat(C(0, 1), self.instr.instr[8:12], self.instr.instr[25:31], self.instr.instr[7], self.instr.instr[31].replicate(20))),
             ]
 
         with m.If(self.instr_flags.isLUI | self.instr_flags.isAUIPC):   # LUI, AUIPC instructions --> Uimm

@@ -81,14 +81,15 @@ class Pipeline(wiring.Component):
                     ((self.rd_execute == self.reg_addr_decode.rs1_addr) | 
                      (self.rd_execute == self.reg_addr_decode.rs2_addr))):
             #acá el rd de lo que se está ejecut&o es igual al rs1 o rs2 de lo que se quiere ejecutar. Tengo que frenar hasta que se haya escrito
-                m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(0), self.addr_builder_enable.eq(0), 
-                             self.execute_enable.eq(0), self.retire_enable.eq(1)]
-                
-                m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(1), 
-                             self.retire_mux.eq(0), self.addr_builder_mux.eq(0)] #mux de decode, para meter NOP a execute
+                m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(0), self.execute_enable.eq(0), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
+                m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(1), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)] #mux de decode, para meter NOP a execute
 
-        with m.Else(): #este caso es en el que ta to' normal
-            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
+        with m.Else():   #este caso es en el que ta to' normal
             m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(1), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(1)]
+            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(0), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
+
+        with m.If(self.instr_flags_decode.isBranch):
+            m.d.comb += [self.fetch_enable.eq(0), self.decode_enable.eq(0), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
+            m.d.comb += [self.fetch_mux.eq(0), self.decode_mux.eq(1), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
         
         return m

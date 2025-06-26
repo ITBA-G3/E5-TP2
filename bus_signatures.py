@@ -45,6 +45,9 @@ class decode_reg_addr(wiring.Signature):
             "rs2_addr": Out(5),
             "rd_addr": Out(5)
         })
+    
+    def __eq__(self, other):
+        return self.members == other.members
         
 class operand_b_alu(wiring.Signature):
     def __init__(self):
@@ -141,3 +144,6 @@ class branch_flags(wiring.Signature):
             "bltu": Out(1),
             "bgeu": Out(1)
         })
+    
+    def __eq__(self, other):
+        return self.members == other.members
