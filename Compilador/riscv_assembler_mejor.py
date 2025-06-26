@@ -15,7 +15,7 @@ ISA = {
     'or':   {'type': 'R', 'opcode': '0110011', 'funct3': '110', 'funct7': '0000000'},
     'and':  {'type': 'R', 'opcode': '0110011', 'funct3': '111', 'funct7': '0000000'},
 
-    # I-type (incluye shifts con shamt)
+    # I-type (incluye shamt)
     'addi':  {'type': 'I', 'opcode': '0010011', 'funct3': '000'},
     'slti':  {'type': 'I', 'opcode': '0010011', 'funct3': '010'},
     'sltiu': {'type': 'I', 'opcode': '0010011', 'funct3': '011'},

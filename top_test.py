@@ -68,4 +68,4 @@ sim.add_clock(1e-6)
 sim.add_testbench(proc)
 
 with sim.write_vcd('top_test.vcd'):
-    sim.run_until(200 * 1e-6)  # Run for 20 ms
+    sim.run_until(250 * 1e-6)  # Run for 20 ms

@@ -86,7 +86,7 @@ class Pipeline(wiring.Component):
             m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(0), self.execute_enable.eq(1), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
             m.d.comb += [self.decode_mux.eq(1), self.execute_mux.eq(0), self.retire_mux.eq(0), self.addr_builder_mux.eq(0)]
 
-        with m.Elif(((self.instr_flags_decode.isALUreg | self.instr_flags_decode.isALUimm) & (self.instr_flags_execute.isALUreg | self.instr_flags_execute.isALUimm)) & ((self.reg_addr_decode.rs1_addr != 0) & (self.rd_execute != 0) & ((self.rd_execute == self.reg_addr_decode.rs1_addr) | (self.rd_execute == self.reg_addr_decode.rs2_addr)))):
+        with m.Elif(((self.instr_flags_decode.isALUreg | self.instr_flags_decode.isALUimm |self.instr_flags_decode.isBranch) & (self.instr_flags_execute.isALUreg | self.instr_flags_execute.isALUimm | self.instr_flags_execute.isBranch)) & ((self.reg_addr_decode.rs1_addr != 0) & (self.rd_execute != 0) & ((self.rd_execute == self.reg_addr_decode.rs1_addr) | (self.rd_execute == self.reg_addr_decode.rs2_addr)))):
             #acá el rd de lo que se está ejecut&o es igual al rs1 o rs2 de lo que se quiere ejecutar. Tengo que frenar hasta que se haya escrito
             m.d.comb += self.regbank_we.eq(1) 
             m.d.comb += [self.fetch_enable.eq(1), self.decode_enable.eq(0), self.execute_enable.eq(0), self.retire_enable.eq(1), self.addr_builder_enable.eq(0)]
