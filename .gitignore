@@ -4,3 +4,23 @@ amaranth/env.sh
 amaranth/tools/riscv_assembler.py
 Amaranth Guide.pdf
 *.autosave.xopp
+
+# --- Python bytecode ---
+__pycache__/
+*.py[cod]
+
+# --- Simulation waveforms / compiled sim binaries ---
+*.vcd
+*.surf.ron
+mvp-0/modules/sim/*/*_sim
+
+# --- Quartus Prime build output ---
+mvp-0/db/
+mvp-0/incremental_db/
+mvp-0/greybox_tmp/
+mvp-0/output_files/
+mvp-0/simulation/
+mvp-0/*.qws
+
+# --- Editor backups ---
+*.bak
